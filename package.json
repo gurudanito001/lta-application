@@ -1,0 +1,39 @@
+{
+  "name": "lta-project",
+  "version": "1.0.0",
+  "description": "therapy application backend",
+  "main": "build/app.js",
+  "scripts": {
+    "build": "npx tsc -p .",
+    "start": "node .",
+    "dev": "npx nodemon src/app.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "node.js",
+    "express",
+    "api",
+    "typescript"
+  ],
+  "author": "Daniel Nwokocha",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "joi": "^17.13.3",
+    "morgan": "^1.10.0",
+    "ts-node": "^10.9.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.21",
+    "@types/helmet": "^4.0.0",
+    "@types/morgan": "^1.9.9",
+    "node-ts": "^6.0.1",
+    "nodemon": "^3.1.4",
+    "typescript": "^5.5.2"
+  }
+}
