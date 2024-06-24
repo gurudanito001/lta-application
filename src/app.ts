@@ -4,10 +4,11 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import router from './routes';
+import config from './config/config'
 
 // Create Express server
 const app = express(); // New express instance
-const port = 3000; // Port number
+const port = config.SERVER_PORT; // Port number
 
 // Express configuration
 app.use(cors()); // Enable CORS

@@ -5,7 +5,7 @@ const router = Router();
 
 // Home routes
 router.get('/', (req: Request, res: Response) => {
-  res.send('Hello World from Nigeria!');
+  res.send('Hello World from Therapy application!');
 });
 
 export default router;

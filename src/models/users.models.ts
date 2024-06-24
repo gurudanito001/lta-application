@@ -1,49 +1,114 @@
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-  password: string;
+import { prisma } from "../utils/prisma"
+import feelings from "../data/consts";
+
+
+export interface getUserFilters {
+  userType?: "venter" | "listener",
+  country?: string,
+  gender?: string,
+  online?: boolean,
+  topics?: string[]
 }
 
-const users: Array<User> = [
-  {
-    id: 1,
-    name: 'John Doe',
-    email: 'john.doe@test.com',
-    password: '123456',
-  },
-  {
-    id: 2,
-    name: 'Jane Doe',
-    email: 'jane.doe@test.com',
-    password: 'secret',
-  },
-  {
-    id: 3,
-    name: 'Jack Doe',
-    email: 'jack.doe@test.com',
-    password: 'password',
-  },
-];
-
-export const getUsers = (): Array<User> => {
-  return users;
+export const getAllMoods = async() => {
+  return feelings
 };
 
-export const getUserById = (id: number): User | undefined => {
-  return users.find(user => user.id === id);
+export const getAllUsers = async(filters: getUserFilters) => {
+  const users = await prisma.user.findMany({
+    where: {
+      ...(filters?.userType && {userType: filters.userType}),
+      ...(filters?.country && {country: filters.country}),
+      ...(filters?.gender && {gender: filters.gender}),
+      ...(filters?.online && {online: filters.online}),
+      ...(filters?.topics && {topics: {hasEvery: filters?.topics}})
+    },
+    orderBy: {
+      createdAt: "desc"
+    }
+  });
+  return users
 };
 
-export const createUser = (user: User): void => {
-  users.push(user);
+export const getUserById = async(id: string) => {
+  const user = await prisma.user.findFirst({
+    where: {id}
+  })
+  return user
 };
 
-export const updateUser = (user: User): void => {
-  const index = users.findIndex(u => u.id === user.id);
-  users[index] = user;
+export const getUserByEmail = async(email: string) => {
+  const user = await prisma.user.findFirst({
+    where: {email}
+  })
+  return user
 };
 
-export const deleteUser = (id: number): void => {
-  const index = users.findIndex(u => u.id === id);
-  users.splice(index, 1);
+export const getUserByUsername = async(username: string) => {
+  const user = await prisma.user.findFirst({
+    where: {username}
+  })
+  return user
+};
+
+interface createUserData {
+  firstName:       string
+  lastName:        string
+  userType:        "venter" | "listener"          
+  username?:        string         
+  country?:         string
+  gender?:          string
+  email:           string            
+  password:        string    
+  online?:          boolean           
+  profileImage?:    string
+  topics?:          string[]          
+  feeling?:         object              
+  bio?:             string
+  emailVerified:   boolean  
+}
+export const createUser = async(userData: createUserData) => {
+  const user = await prisma.user.create({
+    data: userData
+  })
+  return user
+};
+
+
+interface updateUserData {
+  firstName?:       string
+  lastName?:        string
+  userType?:        "venter" | "listener"          
+  username?:        string         
+  country?:         string
+  gender?:          string
+  email?:           string            
+  password?:        string    
+  online?:          boolean           
+  profileImage?:    string
+  topics?:          string[]          
+  feeling?:         object              
+  bio?:             string
+}
+export const updateUser = async (id: string, updateData: updateUserData) => {
+  const user = await prisma.user.update({
+    where: {id},
+    data: updateData
+  })
+  return user;
+};
+
+export const updateUserByEmail = async (email: string, updateData: updateUserData) => {
+  const user = await prisma.user.update({
+    where: {email},
+    data: updateData
+  })
+  return user;
+};
+
+export const deleteUser = async(id: string) => {
+  const user = await prisma.user.delete({
+    where: {id}
+  })
+  return user
 };
