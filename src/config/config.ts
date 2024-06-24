@@ -8,7 +8,8 @@ dotenv.config();
 // as someone could skip these varibales or not setup a .env file at all
 
 interface ENV {
-  SERVER_PORT: number | undefined
+  environment: string | undefined;
+  SERVER_PORT: number | undefined;
   DATABASE_URL: string | undefined;
   ACCESS_TOKEN_EXPIRY: number | undefined;
   SECRET: string | undefined;
@@ -20,6 +21,7 @@ interface ENV {
 }
 
 interface Config {
+  environment: string
   DATABASE_URL: string;
   SECRET: string;
   SERVER_PORT: number;
@@ -35,6 +37,7 @@ interface Config {
 
 const getConfig = (): ENV => {
   return {
+    environment: process.env.environment,
     DATABASE_URL: process.env.DATABASE_URL,
     SECRET: process.env.SECRET,
     SERVER_PORT: Number(process.env.SERVER_PORT),
