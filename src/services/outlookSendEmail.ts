@@ -35,7 +35,7 @@ module.exports.sendEmail = function (options: optionsData) {
         port: options.port || 587,     // secure SMTP
         secure: config.environment === "dev" ? false : true, // false for TLS - as a boolean not string - but the default is false so just remove this completely
         auth: options.auth,
-        tls: options.tls || {ciphers: 'SSLv3'}
+        //tls: options.tls || {ciphers: 'SSLv3'}
     });
     transporter.sendMail({
         from: options.from,
