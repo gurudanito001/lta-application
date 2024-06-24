@@ -15,6 +15,8 @@ interface ENV {
   cloudinary_cloud_name: string | undefined;
   cloudinary_api_key: string | undefined;
   cloudinary_api_secret: string | undefined;
+  email_username: string | undefined;
+  email_password: string | undefined;
 }
 
 interface Config {
@@ -25,6 +27,8 @@ interface Config {
   cloudinary_cloud_name: string;
   cloudinary_api_key: string;
   cloudinary_api_secret: string;
+  email_username: string | undefined;
+  email_password: string | undefined;
 }
 
 // Loading process.env as ENV interface
@@ -38,6 +42,8 @@ const getConfig = (): ENV => {
     cloudinary_cloud_name: process.env.cloudinary_cloud_name,
     cloudinary_api_key: process.env.cloudinary_api_key,
     cloudinary_api_secret: process.env.cloudinary_api_secret,
+    email_username: process.env.email_username,
+    email_password: process.env.email_password,
   };
 };
 

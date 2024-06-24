@@ -11,7 +11,7 @@ export default async function sendEmail({ email, code, message = "verify your em
 
     let transporter = Nodemailer.createTransport({
         name: "danielnwokocha",  //www.agronigeria.ng
-        host: "smtp-mail.outlook.com",  //mail.agronigeria.ng
+        host: "smtp.office365.com",  //mail.agronigeria.ng smtp-mail.outlook.com
         port: 587,
         secure: false, // true for 465, false for other ports
         auth: {

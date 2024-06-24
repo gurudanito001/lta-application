@@ -7,6 +7,7 @@ import {
   updateUserByEmail,
 
 } from '../models/users.models';
+import config from "../config/config"
 import { getEmailByName, deleteEmail, createEmail, updateEmail } from '../models/emails.models';
 import type { User } from '@prisma/client';
 import { getUserFilters } from '../models/users.models';
@@ -17,6 +18,7 @@ import { uploadImage } from '../services/fileService';
 import { isPasswordMatch } from '../services/authServices';
 import { generateToken } from '../services/tokenService';
 import countries from '../data/countries';
+const nodeoutlook = require('../services/outlookSendEmail');
 
 
 export const verifyEmailController =  async (req: Request, res: Response) => {
@@ -44,7 +46,36 @@ export const verifyEmailController =  async (req: Request, res: Response) => {
       await createEmail({email: email, code: randomCode})
     }
     // send email to user email
-    await sendEmail({email, code: randomCode});
+    //await sendEmail({email, code: randomCode});
+
+    nodeoutlook.sendEmail({
+      auth: {
+        user: config.email_username,
+        pass: config.email_password
+      },
+      from: config.email_username,
+      to: email,
+      subject: 'Email Verification',
+      html: `
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center;">
+            <h3>Loose Therapy Application</h3>
+            <p>Use this code to verify your email</p>
+            
+            <h1> ${randomCode} </h1>
+
+            <p> This code will expire in 30 minutes </p>
+            <p style="line-height: 1.3rem;">
+            Thanks <br />
+            <em>The Loose Therapy App Team</em>
+            </p>
+        </div>
+        `,
+      text: `Use this code to verify your email ${randomCode}`,
+      onError: (e: any) => console.log(e),
+      onSuccess: (i: any) => console.log(i)
+    });
+
+
     res.status(200).json({ message: "Verification code will be sent to email", status: "success", payload: {code: randomCode} });
   } catch (error: any) {
     res.status(500).json({ message: `Something went wrong ${error?.message}` });
@@ -128,7 +159,37 @@ export const forgotPasswordController =  async (req: Request, res: Response) => 
     }
     const randomCode = generateRandomCode()
     await updateEmail(email, {code: randomCode})
-    await sendEmail({email, code: randomCode})
+    //await sendEmail({email, code: randomCode})
+
+    nodeoutlook.sendEmail({
+      auth: {
+        user: config.email_username,
+        pass: config.email_password
+      },
+      from: config.email_username,
+      to: email,
+      subject: 'Forgot Password Verification Mail',
+      html: `
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center;">
+            <h3>Loose Therapy Application</h3>
+            <p>Use this code to reset your password</p>
+            
+            <h1> ${randomCode} </h1>
+
+            <p> This code will expire in 30 minutes </p>
+            <p style="line-height: 1.3rem;">
+            Thanks <br />
+            <em>The Loose Therapy App Team</em>
+            </p>
+        </div>
+        `,
+      text: `Use this code to reset your password ${randomCode}`,
+      onError: (e: any) => console.log(e),
+      onSuccess: (i: any) => console.log(i)
+    });
+
+
+
     res.status(200).json({message: "Verification Code sent to email", status: "success", payload: {code: randomCode}})
   } catch (error: any) {
     res.status(500).json({ message: `Something went wrong ${error?.message}` });
