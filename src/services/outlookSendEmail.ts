@@ -31,9 +31,9 @@ module.exports.sendEmail = function (options: optionsData) {
 
     }
     var transporter = nodemailer.createTransport({
+        name: "danielnwokocha",
         host: options.host || 'smtp.office365.com', // Office 365 server
         port: options.port || 587,     // secure SMTP
-        secure: config.environment === "dev" ? false : true, // false for TLS - as a boolean not string - but the default is false so just remove this completely
         auth: options.auth,
         //tls: options.tls || {ciphers: 'SSLv3'}
     });

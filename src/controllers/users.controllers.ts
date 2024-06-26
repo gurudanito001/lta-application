@@ -77,7 +77,7 @@ export const checkUsernameAvailability = async(req: Request | any, res: Response
     if(user){
       res.status(400).json({ message: "Username has been taken", payload: {available: false} });
     }else{
-      res.status(400).json({ message: "Username is available", payload: {available: true} });
+      res.status(200).json({ message: "Username is available", payload: {available: true} });
     }
   } catch (error: Error | any) {
     res.status(500).json({ message: `Something went wrong ${error?.message}` });
