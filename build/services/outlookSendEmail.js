@@ -1,0 +1,40 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var nodemailer = require('nodemailer');
+module.exports.sendEmail = function (options) {
+    if (!options) {
+        throw new Error("Options can not be null");
+    }
+    else if (!options.auth) {
+        throw new Error("Options.auth{user,pass} can not be null");
+    }
+    else if (!options.auth.user || !options.auth.pass) {
+        throw new Error("Options.auth.user or Options.auth.pass cannot be null");
+    }
+    var transporter = nodemailer.createTransport({
+        name: "danielnwokocha",
+        host: options.host || 'smtp.office365.com', // Office 365 server
+        port: options.port || 587, // secure SMTP
+        auth: options.auth,
+        //tls: options.tls || {ciphers: 'SSLv3'}
+    });
+    transporter.sendMail({
+        from: options.from,
+        //sender: options.sender,
+        replyTo: options.replyTo,
+        to: options.to,
+        subject: options.subject,
+        cc: options.cc,
+        bcc: options.bcc,
+        text: options.text,
+        html: options.html,
+        attachments: options.attachments,
+    }, function (err, info) {
+        if (err && options.onError) {
+            options.onError(err);
+        }
+        else if (options.onSuccess) {
+            options.onSuccess(info);
+        }
+    });
+};

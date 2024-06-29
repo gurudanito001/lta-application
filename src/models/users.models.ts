@@ -67,9 +67,7 @@ export const getAllListeners = async( userId: string, filters: getListenerPrefer
 export const getUserById = async(id: string) => {
   const user = await prisma.user.findFirst({
     where: {id},
-    include: {
-      listeningPreferences: true
-    }
+    include: {listeningPreferences: true}
   })
   return user
 };

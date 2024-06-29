@@ -9,9 +9,10 @@ const cors_1 = __importDefault(require("cors"));
 const helmet_1 = __importDefault(require("helmet"));
 const morgan_1 = __importDefault(require("morgan"));
 const routes_1 = __importDefault(require("./routes"));
+const config_1 = __importDefault(require("./config/config"));
 // Create Express server
 const app = (0, express_1.default)(); // New express instance
-const port = 3000; // Port number
+const port = config_1.default.SERVER_PORT; // Port number
 // Express configuration
 app.use((0, cors_1.default)()); // Enable CORS
 app.use((0, helmet_1.default)()); // Enable Helmet

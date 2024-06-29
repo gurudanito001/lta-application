@@ -5,6 +5,6 @@ const express_1 = require("express");
 const router = (0, express_1.Router)();
 // Home routes
 router.get('/', (req, res) => {
-    res.send('Hello World from Nigeria!');
+    res.send('Hello World from Therapy application!');
 });
 exports.default = router;
