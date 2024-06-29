@@ -1,5 +1,6 @@
 import { prisma } from "../utils/prisma"
 import feelings from "../data/consts";
+import languages from "../data/languages";
 
 
 export interface getUserFilters {
@@ -10,8 +11,13 @@ export interface getUserFilters {
   topics?: string[]
 }
 
+
 export const getAllMoods = async() => {
   return feelings
+};
+
+export const getAllLanguages = async() => {
+  return languages
 };
 
 export const getAllUsers = async(filters: getUserFilters) => {
@@ -23,6 +29,9 @@ export const getAllUsers = async(filters: getUserFilters) => {
       ...(filters?.online && {online: filters.online}),
       ...(filters?.topics && {topics: {hasEvery: filters?.topics}})
     },
+    include: {
+      listeningPreferences: true
+    },
     orderBy: {
       createdAt: "desc"
     }
@@ -30,23 +39,57 @@ export const getAllUsers = async(filters: getUserFilters) => {
   return users
 };
 
+export interface getListenerPreferencesFilters {
+  mood: string
+  gender: string
+  language: string
+  country: string
+}
+export const getAllListeners = async( userId: string, filters: getListenerPreferencesFilters) => { 
+  console.log(filters)
+  const preferences = await prisma.listeningPreferences.findMany({
+    where: {
+      NOT: {
+        userId: userId
+      },
+     topics: { has: filters?.mood },
+     genders: { has: filters?.gender },
+     languages: { has: filters?.language },
+     countries: { has: filters?.country },
+    },
+    include: {
+      user: true
+    }
+  });
+  return preferences
+};
+
 export const getUserById = async(id: string) => {
   const user = await prisma.user.findFirst({
-    where: {id}
+    where: {id},
+    include: {
+      listeningPreferences: true
+    }
   })
   return user
 };
 
 export const getUserByEmail = async(email: string) => {
   const user = await prisma.user.findFirst({
-    where: {email}
+    where: {email},
+    include: {
+      listeningPreferences: true
+    }
   })
   return user
 };
 
 export const getUserByUsername = async(username: string) => {
   const user = await prisma.user.findFirst({
-    where: {username}
+    where: {username},
+    include: {
+      listeningPreferences: true
+    }
   })
   return user
 };
@@ -62,7 +105,8 @@ interface createUserData {
   password:        string    
   online?:          boolean           
   profileImage?:    string
-  topics?:          string[]          
+  topics?:          string[]
+  language?:         string          
   feeling?:         object              
   bio?:             string
   emailVerified:   boolean  
@@ -74,6 +118,33 @@ export const createUser = async(userData: createUserData) => {
   return user
 };
 
+interface CreateUserListeningPreferencesData {
+  userId:           string
+  genders?:         string[]
+  languages?:       string[]          
+  topics?:          string[] 
+  countries?:       string[]
+}
+export const createUserListeningPreferences = async(preferences: CreateUserListeningPreferencesData) => {
+  const listeningPreferences = await prisma.listeningPreferences.create({
+    data: preferences
+  })
+  return listeningPreferences
+};
+
+interface UpdateUserListeningPreferencesData {
+  genders?:        string[]
+  languages?:      string[]          
+  topics?:         string[]    
+  countries?:      string[]
+}
+export const updateUserListeningPreferences = async( userId: string, preferences: UpdateUserListeningPreferencesData) => {
+  const listeningPreferences = await prisma.listeningPreferences.update({
+    where: {userId},
+    data: preferences
+  })
+  return listeningPreferences
+};
 
 interface updateUserData {
   firstName?:       string
@@ -86,14 +157,23 @@ interface updateUserData {
   password?:        string    
   online?:          boolean           
   profileImage?:    string
-  topics?:          string[]          
+  topics?:          string[]  
+  language?:        string        
   feeling?:         object              
   bio?:             string
 }
 export const updateUser = async (id: string, updateData: updateUserData) => {
+  delete updateData?.email
+  delete updateData?.password
+  delete updateData?.userType
+  delete updateData?.profileImage
+
   const user = await prisma.user.update({
     where: {id},
-    data: updateData
+    data: updateData,
+    include: {
+      listeningPreferences: true
+    }
   })
   return user;
 };
@@ -101,7 +181,10 @@ export const updateUser = async (id: string, updateData: updateUserData) => {
 export const updateUserByEmail = async (email: string, updateData: updateUserData) => {
   const user = await prisma.user.update({
     where: {email},
-    data: updateData
+    data: updateData,
+    include: {
+      listeningPreferences: true
+    }
   })
   return user;
 };

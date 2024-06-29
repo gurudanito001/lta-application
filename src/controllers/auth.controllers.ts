@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 import {
   createUser,
+  createUserListeningPreferences,
   getAllUsers,
   getUserByEmail,
   updateUser,
   updateUserByEmail,
-
 } from '../models/users.models';
 import config from "../config/config"
 import { getEmailByName, deleteEmail, createEmail, updateEmail } from '../models/emails.models';
@@ -103,7 +103,7 @@ export const confirmVerificationCodeController =  async (req: Request, res: Resp
 
 export const registerController =  async (req: Request, res: Response) => {
   try {
-    const {firstName, lastName, email, password, userType, username, country, gender, profileImage, bio, topics} = req.body;
+    const {firstName, lastName, email, password, userType, username, country, gender, profileImage, bio, topics, language} = req.body;
     // check if email is verified 
     const emailData = await getEmailByName(email)
     if(!emailData?.verified){
@@ -122,7 +122,11 @@ export const registerController =  async (req: Request, res: Response) => {
       //console.log("image upload result", result)
     }
     // create user 
-    const user = await createUser({firstName, lastName, email, password: hashedPassword, userType, username, country, gender, profileImage: result?.url || "", bio, topics, emailVerified: true})
+    const user = await createUser({firstName, lastName, userType, username, country, gender, email, password: hashedPassword,  profileImage: result?.url || "", bio, topics, language, emailVerified: true})
+    if(user?.userType === "listener"){
+      await createUserListeningPreferences({userId: user?.id})
+    }
+    
     res.status(201).json({message: "User Registration Successful", status: "success", payload: user})
   } catch (error: any) {
     res.status(500).json({ message: `Something went wrong ${error?.message}` });

@@ -26,7 +26,8 @@ model User {
   id              String            @id @default(uuid())
   firstName       String
   lastName        String
-  userType        UserType          
+  userType        UserType   
+  listeningPreferences ListeningPreferences?       
   username        String?           @unique
   country         String?
   gender          String?
@@ -36,10 +37,23 @@ model User {
   profileImage    String?
   topics          String[]          @default([])
   feeling         Json              @default("{}")
+  language        String?           
   bio             String?
   emailVerified   Boolean           @default(true)
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
+}
+
+model ListeningPreferences {
+  id              String          @id @default(uuid())
+  user            User            @relation(fields: [userId], references: [id],  onDelete: Cascade) 
+  userId          String          @unique 
+  topics          String[]        @default([])
+  genders         String[]        @default([])
+  languages       String[]        @default([])
+  countries       String[]        @default([])
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt  
 }
 
 

@@ -1,12 +1,17 @@
 import { Request, Response } from 'express';
 import {
   getAllMoods,
+  getAllLanguages,
   getAllUsers,
+  getAllListeners,
   getUserById,
   createUser,
   updateUser,
+  createUserListeningPreferences,
+  updateUserListeningPreferences,
   deleteUser,
-  getUserByUsername
+  getUserByUsername,
+  getListenerPreferencesFilters
 } from '../models/users.models';
 import type { User } from '@prisma/client';
 import { getUserFilters } from '../models/users.models';
@@ -39,6 +44,15 @@ export const setFeelingController = async(req: Request | any, res: Response) => 
     const updateData = req.body;
     const updatedUser = await updateUser(id, updateData)
     res.status(200).json({ message: "User feeling updated successfully", payload: updatedUser });
+  } catch (error: Error | any) {
+    res.status(500).json({ message: `Something went wrong ${error?.message}` });
+  }
+};
+
+export const getLanguagesController =  async (req: Request, res: Response) => {
+  try {
+    const languages = await getAllLanguages();
+    res.status(200).json({ message: "Languages fetched successfully", payload: languages });
   } catch (error: Error | any) {
     res.status(500).json({ message: `Something went wrong ${error?.message}` });
   }
@@ -94,6 +108,17 @@ export const getUsersController =  async (req: Request, res: Response) => {
   }
 };
 
+export const getListenersController =  async (req: Request | any, res: Response) => {
+  const id = req.user.userId;
+  const {mood, gender, language, country}: getListenerPreferencesFilters = req.query;
+  try {
+    const listeners = await getAllListeners(id, {mood, gender, language, country});
+    res.status(200).json({ message: "Listeners fetched successfully", payload: listeners });
+  } catch (error: Error | any) {
+    res.status(500).json({ message: `Something went wrong ${error?.message}` });
+  }
+};
+
 export const getUserByIdController = async(req: Request, res: Response) => {
   try {
     const id = req.params.id;
@@ -118,12 +143,43 @@ export const createUserController = async(req: Request, res: Response) => {
   }
 };
 
-export const updateUserController = async(req: Request, res: Response) => {
+export const updateUserController = async(req: Request | any, res: Response) => {
   try {
-    const id = req.params.id;
+    const id = req.user.userId;
     const updateData = req.body;
     const updatedUser = await updateUser(id, updateData)
     res.status(200).json({ message: "User updated successfully", payload: updatedUser });
+  } catch (error: Error | any) {
+    res.status(500).json({ message: `Something went wrong ${error?.message}` });
+  }
+};
+
+export const createListeningPreferencesController = async(req: Request | any, res: Response) => {
+  try {
+    const id = req.user.userId;
+    let user = await getUserById(id);
+    if(user?.userType !== "listener"){
+      return res.status(400).json({ message: `Only listeners can have listening preferences` });
+    }
+    const data = req.body;
+    data.userId = id;
+    const listeningPreferences = await createUserListeningPreferences(data);
+    res.status(200).json({ message: "User Listening Preferences updated successfully", payload: listeningPreferences });
+  } catch (error: Error | any) {
+    res.status(500).json({ message: `Something went wrong ${error?.message}` });
+  }
+};
+
+export const updateListeningPreferencesController = async(req: Request | any, res: Response) => {
+  try {
+    const id = req.user.userId;
+    let user = await getUserById(id);
+    if(user?.userType !== "listener"){
+      return res.status(400).json({ message: `Only listeners can update listening preferences` });
+    }
+    const updateData = req.body;
+    const listeningPreferences = await updateUserListeningPreferences(id, updateData)
+    res.status(200).json({ message: "User Listening Preferences updated successfully", payload: listeningPreferences });
   } catch (error: Error | any) {
     res.status(500).json({ message: `Something went wrong ${error?.message}` });
   }
