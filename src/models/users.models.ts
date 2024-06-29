@@ -1,7 +1,6 @@
 import { prisma } from "../utils/prisma"
 import feelings from "../data/consts";
 import languages from "../data/languages";
-import type { Preference } from "@prisma/client";
 
 
 export interface getUserFilters {
