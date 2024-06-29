@@ -30,7 +30,7 @@ export const getAllUsers = async(filters: getUserFilters) => {
       ...(filters?.topics && {topics: {hasEvery: filters?.topics}})
     },
     include: {
-      listeningPreferences: true
+      preferences: true
     },
     orderBy: {
       createdAt: "desc"
@@ -47,7 +47,7 @@ export interface getListenerPreferencesFilters {
 }
 export const getAllListeners = async( userId: string, filters: getListenerPreferencesFilters) => { 
   console.log(filters)
-  const preferences = await prisma.listeningPreferences.findMany({
+  const preferences = await prisma.preference.findMany({
     where: {
       NOT: {
         userId: userId
@@ -67,7 +67,7 @@ export const getAllListeners = async( userId: string, filters: getListenerPrefer
 export const getUserById = async(id: string) => {
   const user = await prisma.user.findFirst({
     where: {id},
-    include: {listeningPreferences: true}
+    include: {preferences: true}
   })
   return user
 };
@@ -76,7 +76,7 @@ export const getUserByEmail = async(email: string) => {
   const user = await prisma.user.findFirst({
     where: {email},
     include: {
-      listeningPreferences: true
+      preferences: true
     }
   })
   return user
@@ -86,7 +86,7 @@ export const getUserByUsername = async(username: string) => {
   const user = await prisma.user.findFirst({
     where: {username},
     include: {
-      listeningPreferences: true
+      preferences: true
     }
   })
   return user
@@ -124,7 +124,7 @@ interface CreateUserListeningPreferencesData {
   countries?:       string[]
 }
 export const createUserListeningPreferences = async(preferences: CreateUserListeningPreferencesData) => {
-  const listeningPreferences = await prisma.listeningPreferences.create({
+  const listeningPreferences = await prisma.preference.create({
     data: preferences
   })
   return listeningPreferences
@@ -137,7 +137,7 @@ interface UpdateUserListeningPreferencesData {
   countries?:      string[]
 }
 export const updateUserListeningPreferences = async( userId: string, preferences: UpdateUserListeningPreferencesData) => {
-  const listeningPreferences = await prisma.listeningPreferences.update({
+  const listeningPreferences = await prisma.preference.update({
     where: {userId},
     data: preferences
   })
@@ -170,7 +170,7 @@ export const updateUser = async (id: string, updateData: updateUserData) => {
     where: {id},
     data: updateData,
     include: {
-      listeningPreferences: true
+      preferences: true
     }
   })
   return user;
@@ -181,7 +181,7 @@ export const updateUserByEmail = async (email: string, updateData: updateUserDat
     where: {email},
     data: updateData,
     include: {
-      listeningPreferences: true
+      preferences: true
     }
   })
   return user;

@@ -27,7 +27,7 @@ model User {
   firstName       String
   lastName        String
   userType        UserType   
-  listeningPreferences ListeningPreferences?       
+  preferences     Preference?       
   username        String?           @unique
   country         String?
   gender          String?
@@ -44,7 +44,7 @@ model User {
   updatedAt       DateTime          @updatedAt
 }
 
-model ListeningPreferences {
+model Preference {
   id              String          @id @default(uuid())
   user            User            @relation(fields: [userId], references: [id],  onDelete: Cascade) 
   userId          String          @unique 
