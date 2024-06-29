@@ -16,10 +16,18 @@ import {
 import type { User } from '@prisma/client';
 import { getUserFilters } from '../models/users.models';
 import { uploadImage } from '../services/fileService';
+//import { prisma } from '../utils/prisma';
 
 
 export const getMoodsController =  async (req: Request, res: Response) => {
   try {
+    /* await prisma.email.deleteMany();
+    await prisma.user.deleteMany();
+    await prisma.listeningPreferences.deleteMany();
+    await prisma.recommendation.deleteMany(); */
+
+
+
     const moods = await getAllMoods();
     res.status(200).json({ message: "Moods fetched successfully", payload: moods });
   } catch (error: Error | any) {
