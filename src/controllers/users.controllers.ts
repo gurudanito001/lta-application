@@ -16,7 +16,7 @@ import {
 import type { User } from '@prisma/client';
 import { getUserFilters } from '../models/users.models';
 import { uploadImage } from '../services/fileService';
-//import { prisma } from '../utils/prisma';
+import { prisma } from '../utils/prisma';
 
 
 export const getMoodsController =  async (req: Request, res: Response) => {
