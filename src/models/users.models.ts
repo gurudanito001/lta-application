@@ -1,6 +1,7 @@
 import { prisma } from "../utils/prisma"
 import feelings from "../data/consts";
 import languages from "../data/languages";
+import type { Preference } from "@prisma/client";
 
 
 export interface getUserFilters {
@@ -28,9 +29,6 @@ export const getAllUsers = async(filters: getUserFilters) => {
       ...(filters?.gender && {gender: filters.gender}),
       ...(filters?.online && {online: filters.online}),
       ...(filters?.topics && {topics: {hasEvery: filters?.topics}})
-    },
-    include: {
-      preferences: true
     },
     orderBy: {
       createdAt: "desc"
@@ -67,27 +65,20 @@ export const getAllListeners = async( userId: string, filters: getListenerPrefer
 export const getUserById = async(id: string) => {
   const user = await prisma.user.findFirst({
     where: {id},
-    include: {preferences: true}
   })
   return user
 };
 
 export const getUserByEmail = async(email: string) => {
   const user = await prisma.user.findFirst({
-    where: {email},
-    include: {
-      preferences: true
-    }
+    where: {email}
   })
   return user
 };
 
 export const getUserByUsername = async(username: string) => {
   const user = await prisma.user.findFirst({
-    where: {username},
-    include: {
-      preferences: true
-    }
+    where: {username}
   })
   return user
 };
@@ -168,10 +159,7 @@ export const updateUser = async (id: string, updateData: updateUserData) => {
 
   const user = await prisma.user.update({
     where: {id},
-    data: updateData,
-    include: {
-      preferences: true
-    }
+    data: updateData
   })
   return user;
 };
@@ -179,10 +167,7 @@ export const updateUser = async (id: string, updateData: updateUserData) => {
 export const updateUserByEmail = async (email: string, updateData: updateUserData) => {
   const user = await prisma.user.update({
     where: {email},
-    data: updateData,
-    include: {
-      preferences: true
-    }
+    data: updateData
   })
   return user;
 };
