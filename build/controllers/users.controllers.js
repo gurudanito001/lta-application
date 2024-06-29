@@ -14,6 +14,10 @@ const users_models_1 = require("../models/users.models");
 const fileService_1 = require("../services/fileService");
 const getMoodsController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        /* await prisma.email.deleteMany();
+        await prisma.user.deleteMany();
+        await prisma.listeningPreferences.deleteMany();
+        await prisma.recommendation.deleteMany(); */
         const moods = yield (0, users_models_1.getAllMoods)();
         res.status(200).json({ message: "Moods fetched successfully", payload: moods });
     }

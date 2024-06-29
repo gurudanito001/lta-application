@@ -28,7 +28,7 @@ const getAllUsers = (filters) => __awaiter(void 0, void 0, void 0, function* () 
     const users = yield prisma_1.prisma.user.findMany({
         where: Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, ((filters === null || filters === void 0 ? void 0 : filters.userType) && { userType: filters.userType })), ((filters === null || filters === void 0 ? void 0 : filters.country) && { country: filters.country })), ((filters === null || filters === void 0 ? void 0 : filters.gender) && { gender: filters.gender })), ((filters === null || filters === void 0 ? void 0 : filters.online) && { online: filters.online })), ((filters === null || filters === void 0 ? void 0 : filters.topics) && { topics: { hasEvery: filters === null || filters === void 0 ? void 0 : filters.topics } })),
         include: {
-            listeningPreferences: true
+            preferences: true
         },
         orderBy: {
             createdAt: "desc"
@@ -39,7 +39,7 @@ const getAllUsers = (filters) => __awaiter(void 0, void 0, void 0, function* () 
 exports.getAllUsers = getAllUsers;
 const getAllListeners = (userId, filters) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(filters);
-    const preferences = yield prisma_1.prisma.listeningPreferences.findMany({
+    const preferences = yield prisma_1.prisma.preference.findMany({
         where: {
             NOT: {
                 userId: userId
@@ -59,7 +59,7 @@ exports.getAllListeners = getAllListeners;
 const getUserById = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield prisma_1.prisma.user.findFirst({
         where: { id },
-        include: { listeningPreferences: true }
+        include: { preferences: true }
     });
     return user;
 });
@@ -68,7 +68,7 @@ const getUserByEmail = (email) => __awaiter(void 0, void 0, void 0, function* ()
     const user = yield prisma_1.prisma.user.findFirst({
         where: { email },
         include: {
-            listeningPreferences: true
+            preferences: true
         }
     });
     return user;
@@ -78,7 +78,7 @@ const getUserByUsername = (username) => __awaiter(void 0, void 0, void 0, functi
     const user = yield prisma_1.prisma.user.findFirst({
         where: { username },
         include: {
-            listeningPreferences: true
+            preferences: true
         }
     });
     return user;
@@ -92,14 +92,14 @@ const createUser = (userData) => __awaiter(void 0, void 0, void 0, function* () 
 });
 exports.createUser = createUser;
 const createUserListeningPreferences = (preferences) => __awaiter(void 0, void 0, void 0, function* () {
-    const listeningPreferences = yield prisma_1.prisma.listeningPreferences.create({
+    const listeningPreferences = yield prisma_1.prisma.preference.create({
         data: preferences
     });
     return listeningPreferences;
 });
 exports.createUserListeningPreferences = createUserListeningPreferences;
 const updateUserListeningPreferences = (userId, preferences) => __awaiter(void 0, void 0, void 0, function* () {
-    const listeningPreferences = yield prisma_1.prisma.listeningPreferences.update({
+    const listeningPreferences = yield prisma_1.prisma.preference.update({
         where: { userId },
         data: preferences
     });
@@ -115,7 +115,7 @@ const updateUser = (id, updateData) => __awaiter(void 0, void 0, void 0, functio
         where: { id },
         data: updateData,
         include: {
-            listeningPreferences: true
+            preferences: true
         }
     });
     return user;
@@ -126,7 +126,7 @@ const updateUserByEmail = (email, updateData) => __awaiter(void 0, void 0, void 
         where: { email },
         data: updateData,
         include: {
-            listeningPreferences: true
+            preferences: true
         }
     });
     return user;
