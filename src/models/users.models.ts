@@ -49,10 +49,10 @@ export const getAllListeners = async( userId: string, filters: getListenerPrefer
       NOT: {
         userId: userId
       },
-     topics: { has: filters?.mood },
-     genders: { has: filters?.gender },
-     languages: { has: filters?.language },
-     countries: { has: filters?.country },
+      ...(filters?.mood && {topics: { has: filters?.mood }}),
+      ...(filters?.gender && {genders: { has: filters?.gender }}),
+      ...(filters?.language && {languages: { has: filters?.language }}),
+      ...(filters?.country && {countries: { has: filters?.country }})
     },
     include: {
       user: true
