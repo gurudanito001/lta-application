@@ -64,20 +64,30 @@ export const getAllListeners = async( userId: string, filters: getListenerPrefer
 export const getUserById = async(id: string) => {
   const user = await prisma.user.findFirst({
     where: {id},
+    include: {
+      preferences: true
+    }
   })
+  
   return user
 };
 
 export const getUserByEmail = async(email: string) => {
   const user = await prisma.user.findFirst({
-    where: {email}
+    where: {email},
+    include: {
+      preferences: true
+    }
   })
   return user
 };
 
 export const getUserByUsername = async(username: string) => {
   const user = await prisma.user.findFirst({
-    where: {username}
+    where: {username},
+    include: {
+      preferences: true
+    }
   })
   return user
 };
