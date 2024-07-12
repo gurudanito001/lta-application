@@ -40,8 +40,22 @@ model User {
   language        String?           
   bio             String?
   emailVerified   Boolean           @default(true)
+  followers Follows[] @relation("UserFollowers")
+  following Follows[] @relation("UserFollowing")
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
+}
+
+model Follows {
+  id              String            @id @default(uuid())
+  followerId      String
+  followingId     String
+  // Define foreign keys
+  follower       User     @relation("UserFollowers", fields: [followerId], references: [id])
+  following      User     @relation("UserFollowing", fields: [followingId], references: [id])
+
+  // Define unique constraint to prevent duplicate follows
+  @@unique([followerId, followingId])
 }
 
 model Preference {

@@ -13,7 +13,11 @@ import {
   setProfileImageController,
   getLanguagesController,
   createListeningPreferencesController,
-  getListenersController
+  getListenersController,
+  followUserController,
+  getFollowersController,
+  getFollowingController,
+  changePasswordController
 } from '../controllers/users.controllers';
 import authValidation from '../utils/validators/auth.validators';
 
@@ -21,6 +25,9 @@ import authValidation from '../utils/validators/auth.validators';
 const router = Router();
 
 // Users routes
+router.get('/moods/all', getMoodsController);
+router.get('/languages/all', getLanguagesController);
+router.post('/username/availability', checkUsernameAvailability);
 router.get('/', authValidation, getUsersController);
 router.get('/listeners', authValidation, getListenersController);
 router.get('/:id', authValidation, getUserByIdController);
@@ -28,13 +35,15 @@ router.patch('/profile', authValidation, updateUserController);
 router.post('/listeningPreferences', authValidation, createListeningPreferencesController);
 router.patch('/listeningPreferences', authValidation, updateListeningPreferencesController);
 router.delete('/:id', authValidation, deleteUserController);
-router.get('/moods/all', getMoodsController);
-router.get('/languages/all', getLanguagesController);
 router.patch('/topics', authValidation, setTopicsController);
 router.patch('/feeling', authValidation, setFeelingController);
 router.patch('/availability', authValidation, setAvailabilityController);
 router.patch('/profileImage', authValidation, setProfileImageController);
-router.post('/username/availability', checkUsernameAvailability);
+router.patch('/changePassword', authValidation, changePasswordController);
+
+router.post('/follow', authValidation, followUserController);
+router.get('/follow/getFollowers', authValidation, getFollowersController);
+router.get('/follow/getFollowing', authValidation, getFollowingController);
 
 
 

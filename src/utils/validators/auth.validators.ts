@@ -6,6 +6,7 @@ function authValidation (req: any , res: any, next: any){
     const {authorization} = req.headers;
     let token = authorization?.split(" ")[1]
     let user = decodeToken(token || "")
+    //console.log(user)
     req.user = user;
     next();
   } catch (error) {

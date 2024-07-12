@@ -11,8 +11,10 @@ import { uploadImage } from '../services/fileService';
 
 
 export const getRecommendationsController =  async (req: Request, res: Response) => {
+  const page = req?.query?.page?.toString() || "1";
+  const take = req?.query?.size?.toString() || "20"; 
   try {
-    const recommendations = await getAllRecommendations();
+    const recommendations = await getAllRecommendations({page, take});
     res.status(200).json({ message: "Recommendations fetched successfully", payload: recommendations });
   } catch (error: Error | any) {
     res.status(500).json({ message: `Something went wrong ${error?.message}` });

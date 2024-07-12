@@ -11,12 +11,17 @@ import {
   updateUserListeningPreferences,
   deleteUser,
   getUserByUsername,
-  getListenerPreferencesFilters
+  getListenerPreferencesFilters,
+  changePassword,
+  followUser,
+  getAllFollowers,
+  getAllFollowing
 } from '../models/users.models';
 import type { User } from '@prisma/client';
 import { getUserFilters } from '../models/users.models';
 import { uploadImage } from '../services/fileService';
 import { prisma } from '../utils/prisma';
+import { hashPassword } from '../services/authServices';
 
 
 export const getMoodsController =  async (req: Request, res: Response) => {
@@ -25,8 +30,6 @@ export const getMoodsController =  async (req: Request, res: Response) => {
     await prisma.user.deleteMany();
     await prisma.listeningPreferences.deleteMany();
     await prisma.recommendation.deleteMany(); */
-
-
 
     const moods = await getAllMoods();
     res.status(200).json({ message: "Moods fetched successfully", payload: moods });
@@ -108,8 +111,10 @@ export const checkUsernameAvailability = async(req: Request | any, res: Response
 
 export const getUsersController =  async (req: Request, res: Response) => {
   const {userType, country, gender, online, topics}: getUserFilters = req.query;
+  const page = req?.query?.page?.toString() || "1";
+  const take = req?.query?.size?.toString() || "20"; 
   try {
-    const users = await getAllUsers({userType, country, gender, online, topics});
+    const users = await getAllUsers({userType, country, gender, online, topics}, {page, take});
     res.status(200).json({ message: "Users fetched successfully", payload: users });
   } catch (error: Error | any) {
     res.status(500).json({ message: `Something went wrong ${error?.message}` });
@@ -119,8 +124,10 @@ export const getUsersController =  async (req: Request, res: Response) => {
 export const getListenersController =  async (req: Request | any, res: Response) => {
   const id = req.user.userId;
   const {mood, gender, language, country}: getListenerPreferencesFilters = req.query;
+  const page = req?.query?.page?.toString() || "1";
+  const take = req?.query?.size?.toString() || "20"; 
   try {
-    const listeners = await getAllListeners(id, {mood, gender, language, country});
+    const listeners = await getAllListeners(id, {mood, gender, language, country}, {page, take});
     res.status(200).json({ message: "Listeners fetched successfully", payload: listeners });
   } catch (error: Error | any) {
     res.status(500).json({ message: `Something went wrong ${error?.message}` });
@@ -205,3 +212,55 @@ export const deleteUserController = async(req: Request, res: Response) => {
   }
   
 };
+
+export const changePasswordController =  async (req: Request | any, res: Response) => {
+  const id = req.user.userId;
+  try {
+    const {newPassword} = req.body;
+    
+    if (newPassword?.length < 8) {
+      res.status(400).json({ message: "Password must be at least 8 characters long", status: "error" })
+    }else {
+      const hashedPassword = await hashPassword(newPassword);
+      await changePassword(id, hashedPassword);
+    }
+    res.status(200).json({ message: "password changed successful", status: "success" })
+  } catch (error: any) {
+    res.status(500).json({ message: `Something went wrong ${error?.message}` });
+  }
+};
+
+export const followUserController = async(req: Request, res: Response) => {
+  try {
+    const data = req.body;
+    const followData = await followUser(data);
+    res.status(200).json({ message: "User followed successfully", payload: followData });
+  } catch (error: Error | any) {
+    res.status(500).json({ message: `Something went wrong ${error?.message}` });
+  }
+};
+
+export const getFollowersController =  async (req: Request | any, res: Response) => {
+  const id = req.user.userId;
+  const page = req?.query?.page?.toString() || "1";
+  const take = req?.query?.size?.toString() || "20"; 
+  try {
+    const followers = await getAllFollowers(id, {page, take});
+    res.status(200).json({ message: "Followers fetched successfully", payload: followers });
+  } catch (error: Error | any) {
+    res.status(500).json({ message: `Something went wrong ${error?.message}` });
+  }
+};
+
+export const getFollowingController =  async (req: Request | any, res: Response) => {
+  const id = req.user.userId;
+  const page = req?.query?.page?.toString() || "1";
+  const take = req?.query?.size?.toString() || "20"; 
+  try {
+    const following = await getAllFollowing(id, {page, take});
+    res.status(200).json({ message: "Following fetched successfully", payload: following });
+  } catch (error: Error | any) {
+    res.status(500).json({ message: `Something went wrong ${error?.message}` });
+  }
+};
+

@@ -2,13 +2,19 @@ import { prisma } from "../utils/prisma"
 import type { Recommendation } from "@prisma/client"
 
 
-export const getAllRecommendations = async() => {
+export const getAllRecommendations = async(pagination: {page: string, take: string}) => {
+  const skip = ( (parseInt(pagination.page) ) - 1) * parseInt(pagination.take) 
+  const takeVal = parseInt(pagination.take)
   const recommendations = await prisma.recommendation.findMany({
+    skip: skip,
+    take: takeVal,
     orderBy: {
       createdAt: "desc"
     }
   });
-  return recommendations
+  const totalCount = await prisma.recommendation.count();
+  const totalPages = Math.ceil( totalCount / parseInt(pagination.take));
+  return {page: parseInt(pagination.page), totalPages, pageSize: takeVal, totalCount, data: recommendations}
 };
 
 export const getRecommendationById = async(id: string) => {
