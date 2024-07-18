@@ -6,9 +6,6 @@ import {
   updateRecommendationController,
   deleteRecommendationController
 } from '../controllers/recommendations.controllers';
-import {
-  validateUser
-} from '../utils/validators/users.validators'
 
 // New Router instance
 const router = Router();

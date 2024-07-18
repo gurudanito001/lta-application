@@ -241,7 +241,8 @@ export const followUserController = async(req: Request, res: Response) => {
 };
 
 export const getFollowersController =  async (req: Request | any, res: Response) => {
-  const id = req.user.userId;
+  const {userId} = req.body;
+  const id = userId || req.user.userId;
   const page = req?.query?.page?.toString() || "1";
   const take = req?.query?.size?.toString() || "20"; 
   try {
@@ -253,7 +254,8 @@ export const getFollowersController =  async (req: Request | any, res: Response)
 };
 
 export const getFollowingController =  async (req: Request | any, res: Response) => {
-  const id = req.user.userId;
+  const {userId} = req.body;
+  const id = userId || req.user.userId;
   const page = req?.query?.page?.toString() || "1";
   const take = req?.query?.size?.toString() || "20"; 
   try {

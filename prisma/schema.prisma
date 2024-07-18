@@ -40,8 +40,18 @@ model User {
   language        String?           
   bio             String?
   emailVerified   Boolean           @default(true)
-  followers Follows[] @relation("UserFollowers")
-  following Follows[] @relation("UserFollowing")
+  followers       Follows[] @relation("UserFollowers")
+  following       Follows[] @relation("UserFollowing")
+  blockers        Blocking[] @relation("Blocker")
+  blocked         Blocking[] @relation("Blocked")
+  caller          Call[]         @relation("Caller")
+  receiver        Call[]         @relation("Receiver")
+  initiatedBy     Call[]            @relation("Initiator")
+  receivedBy      Call[]            @relation("Recipient")
+  reporter        Report[]            @relation("Reporter")
+  offender        Report[]            @relation("Offender")
+  rater           Rating[]            @relation("Rater")
+  rated           Rating[]            @relation("Rated")
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
 }
@@ -51,9 +61,10 @@ model Follows {
   followerId      String
   followingId     String
   // Define foreign keys
-  follower       User     @relation("UserFollowers", fields: [followerId], references: [id])
-  following      User     @relation("UserFollowing", fields: [followingId], references: [id])
-
+  follower        User     @relation("UserFollowers", fields: [followerId], references: [id])
+  following       User     @relation("UserFollowing", fields: [followingId], references: [id])
+  createdAt       DateTime?        @default(now())
+  updatedAt       DateTime?        @updatedAt 
   // Define unique constraint to prevent duplicate follows
   @@unique([followerId, followingId])
 }
@@ -77,6 +88,56 @@ model Recommendation {
   description     String?
   image           String?
   link            String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
+model Call {
+  id              String            @id @default(uuid())
+  caller          User?             @relation("Caller", fields: [callerId], references: [id],  onDelete: Cascade) 
+  callerId        String?  
+  receiver        User?             @relation("Receiver", fields: [receiverId], references: [id],  onDelete: Cascade) 
+  receiverId      String?
+  initiatedBy     User              @relation("Initiator", fields: [initiatedById], references: [id],  onDelete: Cascade) 
+  initiatedById   String  
+  receivedBy      User              @relation("Recipient", fields: [receivedById], references: [id],  onDelete: Cascade) 
+  receivedById    String               
+  duration        Int
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
+model Report {
+  id              String            @id @default(uuid())
+  reporter        User             @relation("Reporter", fields: [reporterId], references: [id],  onDelete: Cascade) 
+  reporterId      String  
+  offender        User             @relation("Offender", fields: [offenderId], references: [id],  onDelete: Cascade) 
+  offenderId      String
+  reason          String               
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
+model Blocking {
+  id              String            @id @default(uuid())
+  blocker         User              @relation("Blocker", fields: [blockerId], references: [id],  onDelete: Cascade) 
+  blockerId       String 
+  blocked         User              @relation("Blocked", fields: [blockedId], references: [id],  onDelete: Cascade) 
+  blockedId       String 
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  // Define unique constraint to prevent duplicate blocking
+  @@unique([blockerId, blockedId])
+}
+
+model Rating {
+  id              String            @id @default(uuid())
+  rater           User              @relation("Rater", fields: [raterId], references: [id],  onDelete: Cascade) 
+  raterId         String 
+  rated           User              @relation("Rated", fields: [ratedId], references: [id],  onDelete: Cascade) 
+  ratedId         String 
+  rating          Int
+  comment         String?
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
 }
