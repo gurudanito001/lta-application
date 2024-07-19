@@ -6,8 +6,8 @@ export const getReportsController =  async (req: Request | any, res: Response) =
   const page = req?.query?.page?.toString() || "1";
   const take = req?.query?.size?.toString() || "20"; 
   let filters = {
-    reporterId: req.body.reporterId || "",
-    offenderId: req.body.offenderId || "",
+    reporterId: req?.query?.reporterId || "",
+    offenderId: req?.query?.offenderId || "",
   }
   try {
     const reports = await getAllReports(filters, {page, take});

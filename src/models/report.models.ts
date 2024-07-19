@@ -11,8 +11,10 @@ export const getAllReports = async(filters: getReportFilters, pagination: {page:
   const takeVal = parseInt(pagination.take)
   const reports = await prisma.report.findMany({
     where: {
-      ...(filters?.reporterId && {reporterId: filters.reporterId}),
-      ...(filters?.offenderId && {offenderId: filters.offenderId})
+      OR: [
+        {reporterId: filters.reporterId},
+        {offenderId: filters.offenderId}
+      ]
     },
     skip: skip,
     take: takeVal,

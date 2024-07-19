@@ -14,8 +14,11 @@ import {
   getListenerPreferencesFilters,
   changePassword,
   followUser,
+  unFollowUser,
   getAllFollowers,
-  getAllFollowing
+  getAllFollowing,
+  checkIfIFollowUser,
+  checkIfUserFollowsMe
 } from '../models/users.models';
 import type { User } from '@prisma/client';
 import { getUserFilters } from '../models/users.models';
@@ -240,8 +243,18 @@ export const followUserController = async(req: Request, res: Response) => {
   }
 };
 
+export const unFollowUserController = async(req: Request, res: Response) => {
+  try {
+    const data = req.body;
+    const unFollowData = await unFollowUser(data);
+    res.status(200).json({ message: "User unFollowed successfully", payload: unFollowData });
+  } catch (error: Error | any) {
+    res.status(500).json({ message: `Something went wrong ${error?.message}` });
+  }
+};
+
 export const getFollowersController =  async (req: Request | any, res: Response) => {
-  const {userId} = req.body;
+  const userId = req?.query?.userId;
   const id = userId || req.user.userId;
   const page = req?.query?.page?.toString() || "1";
   const take = req?.query?.size?.toString() || "20"; 
@@ -254,13 +267,37 @@ export const getFollowersController =  async (req: Request | any, res: Response)
 };
 
 export const getFollowingController =  async (req: Request | any, res: Response) => {
-  const {userId} = req.body;
+  const userId = req?.query?.userId;
   const id = userId || req.user.userId;
   const page = req?.query?.page?.toString() || "1";
   const take = req?.query?.size?.toString() || "20"; 
   try {
     const following = await getAllFollowing(id, {page, take});
     res.status(200).json({ message: "Following fetched successfully", payload: following });
+  } catch (error: Error | any) {
+    res.status(500).json({ message: `Something went wrong ${error?.message}` });
+  }
+};
+
+export const checkIfIFollowUserController = async(req: Request, res: Response) => {
+  try {
+    const {followerId, followingId} = req.body;
+    const result = await checkIfIFollowUser({followerId, followingId});
+    
+    res.status(200).json({ message: `You are ${result ? "following user" : "not following user"}`, payload: result });
+    
+  } catch (error: Error | any) {
+    res.status(500).json({ message: `Something went wrong ${error?.message}` });
+  }
+};
+
+export const checkIfUserFollowsMeController = async(req: Request, res: Response) => {
+  try {
+    const {followerId, followingId} = req.body;
+    const result = await checkIfUserFollowsMe({followerId, followingId});
+    
+    res.status(200).json({ message: `You are ${result ? "followed by user" : "not followed by user"}`, payload: result });
+    
   } catch (error: Error | any) {
     res.status(500).json({ message: `Something went wrong ${error?.message}` });
   }

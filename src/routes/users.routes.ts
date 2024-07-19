@@ -15,9 +15,12 @@ import {
   createListeningPreferencesController,
   getListenersController,
   followUserController,
+  unFollowUserController,
   getFollowersController,
   getFollowingController,
-  changePasswordController
+  changePasswordController,
+  checkIfIFollowUserController,
+  checkIfUserFollowsMeController
 } from '../controllers/users.controllers';
 import authValidation from '../utils/validators/auth.validators';
 
@@ -42,9 +45,11 @@ router.patch('/profileImage', authValidation, setProfileImageController);
 router.patch('/changePassword', authValidation, changePasswordController);
 
 router.post('/follow', authValidation, followUserController);
+router.post('/unFollow', authValidation, unFollowUserController);
 router.get('/follow/getFollowers', authValidation, getFollowersController);
 router.get('/follow/getFollowing', authValidation, getFollowingController);
-
+router.post('/follow/checkFollowing', authValidation, checkIfIFollowUserController);
+//router.post('/follow/checkIfFollowed', authValidation, checkIfUserFollowsMeController);
 
 
 export default router;

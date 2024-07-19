@@ -6,7 +6,7 @@ import type { Blocking } from '@prisma/client';
 export const getBlockedUsersController =  async (req: Request | any, res: Response) => {
   /* const page = req?.query?.page?.toString() || "1";
   const take = req?.query?.size?.toString() || "20";  */
-  let filters = {blockerId: req?.user?.userId}
+  let filters = {blockerId: req?.query?.userId || req?.user?.userId}
   try {
     const blockedUsers = await getBlockedUsers(filters);
     res.status(200).json({ message: "Blocked Users fetched successfully", payload: blockedUsers });

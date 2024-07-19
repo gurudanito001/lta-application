@@ -237,6 +237,19 @@ export const followUser = async(userData: followUserData) => {
   return follow
 };
 
+export const unFollowUser = async(userData: followUserData) => {
+  const followData = await prisma.follows.findFirst({
+    where: {
+      followerId: userData?.followerId,
+      followingId: userData?.followingId
+    }
+  })
+  let result = await prisma.follows.delete({
+    where: {id: followData?.id}
+  })
+  return result
+};
+
 export const getAllFollowers = async(userId: string, pagination: {page: string, take: string}) => {
   const skip = ( (parseInt(pagination.page) ) - 1) * parseInt(pagination.take) 
   const takeVal = parseInt(pagination.take)
@@ -269,4 +282,20 @@ export const getAllFollowing = async(userId: string, pagination: {page: string, 
   });
   const totalPages = Math.ceil( totalCount / parseInt(pagination.take));
   return {page: parseInt(pagination.page), totalPages, pageSize: takeVal, totalCount, data: following}
+}
+
+export const checkIfIFollowUser = async(checkData: {followerId: string, followingId: string}) => {
+  
+  const checkResult = await prisma.follows.findFirst({
+    where: {followerId: checkData?.followerId, followingId: checkData?.followingId},
+  })
+  return checkResult ? true : false
+}
+
+export const checkIfUserFollowsMe = async(checkData: {followerId: string, followingId: string}) => {
+  
+  const checkResult = await prisma.follows.findFirst({
+    where: {followerId: checkData?.followerId, followingId: checkData?.followingId},
+  })
+  return checkResult ? true : false
 }
