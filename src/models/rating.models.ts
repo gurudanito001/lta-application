@@ -39,10 +39,10 @@ export const getAllRatings = async(filters: getRatingFilters, pagination: {page:
     take: takeVal,
     include: {
       rater: {
-        select: {firstName: true, lastName: true, username: true}
+        select: {firstName: true, lastName: true, username: true, profileImage: true}
       },
       rated: {
-        select: {firstName: true, lastName: true, username: true}
+        select: {firstName: true, lastName: true, username: true, profileImage: true}
       }
     },
     orderBy: {
@@ -70,10 +70,10 @@ export const getRatingById = async(id: string) => {
     where: {id},
     include: {
       rater: {
-        select: {firstName: true, lastName: true, username: true}
+        select: {firstName: true, lastName: true, username: true, profileImage: true}
       },
       rated: {
-        select: {firstName: true, lastName: true, username: true}
+        select: {firstName: true, lastName: true, username: true, profileImage: true}
       }
     }
   })

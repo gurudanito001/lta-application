@@ -138,6 +138,7 @@ model Rating {
   ratedId         String 
   rating          Int
   comment         String?
+  anonymous       Boolean           @default(false)
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
 }
