@@ -11,10 +11,10 @@ import authValidation from '../utils/validators/auth.validators';
 // New Router instance
 const router = Router();
 
-// Users routes
+// Calls routes
 router.get('/', authValidation, getCallsController);
 router.get('/:id', authValidation, getCallByIdController);
-router.post('/', authValidation, saveCallController);;
+router.post('/', saveCallController);
 router.patch('/clearHistory', authValidation, clearCallLogsController);
 
 export default router;
