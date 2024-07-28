@@ -38,8 +38,9 @@ interface saveCallData {
 export const saveCallController = async(req: Request, res: Response) => {
   try {
     const data = req.body as saveCallData;
-    const call = await createCall(data);
-    res.status(200).json({ message: "Call created successfully", payload: call });
+    console.log("TESTING CALLS!!!!", data)
+    //const call = await createCall(data);
+    res.status(200).json({ message: "Call created successfully", payload: null });
   } catch (error: Error | any) {
     res.status(500).json({ message: `Something went wrong ${error?.message}` });
   }

@@ -11,7 +11,7 @@ export const getBlockedUsers = async(filters: getBlockedUsersFilters) => {
     },
     include: {
       blocked: {
-        select: {firstName: true, lastName: true, username: true}
+        select: {id: true, firstName: true, lastName: true, username: true}
       },
     },
     orderBy: {

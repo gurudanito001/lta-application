@@ -1,6 +1,7 @@
 import { prisma } from "../utils/prisma"
 import feelings from "../data/consts";
 import languages from "../data/languages";
+import { getBlockedUsers } from "./blocking.models";
 
 
 export interface getUserFilters {
@@ -20,11 +21,19 @@ export const getAllLanguages = async() => {
   return languages
 };
 
-export const getAllUsers = async(filters: getUserFilters, pagination: {page: string, take: string}) => {
+export const getAllUsers = async(userId: string, filters: getUserFilters, pagination: {page: string, take: string}) => {
   const skip = ( (parseInt(pagination.page) ) - 1) * parseInt(pagination.take) 
   const takeVal = parseInt(pagination.take)
   const users = await prisma.user.findMany({
     where: {
+      NOT:{
+        id: userId
+      },
+      blocked:{
+        none:{
+          blockerId: userId
+        }
+      },
       ...(filters?.userType && {userType: filters.userType}),
       ...(filters?.country && {country: filters.country}),
       ...(filters?.gender && {gender: filters.gender}),
@@ -39,6 +48,14 @@ export const getAllUsers = async(filters: getUserFilters, pagination: {page: str
   });
   const totalCount = await prisma.user.count({
     where: {
+      NOT:{
+        id: userId
+      },
+      blocked:{
+        none:{
+          blockerId: userId
+        }
+      },
       ...(filters?.userType && {userType: filters.userType}),
       ...(filters?.country && {country: filters.country}),
       ...(filters?.gender && {gender: filters.gender}),
@@ -48,7 +65,6 @@ export const getAllUsers = async(filters: getUserFilters, pagination: {page: str
   });
   const totalPages = Math.ceil( totalCount / parseInt(pagination.take));
   return {page: parseInt(pagination.page), totalPages, pageSize: takeVal, totalCount, data: users}
-  //return users
 };
 
 export interface getListenerPreferencesFilters {
@@ -65,6 +81,13 @@ export const getAllListeners = async( userId: string, filters: getListenerPrefer
       NOT: {
         userId: userId
       },
+      user: {
+        blocked:{
+          none:{
+            blockerId: userId
+          }
+        }
+      },
       ...(filters?.mood && {topics: { has: filters?.mood }}),
       ...(filters?.gender && {genders: { has: filters?.gender }}),
       ...(filters?.language && {languages: { has: filters?.language }}),
@@ -80,6 +103,13 @@ export const getAllListeners = async( userId: string, filters: getListenerPrefer
     where: {
       NOT: {
         userId: userId
+      },
+      user: {
+        blocked:{
+          none:{
+            blockerId: userId
+          }
+        }
       },
       ...(filters?.mood && {topics: { has: filters?.mood }}),
       ...(filters?.gender && {genders: { has: filters?.gender }}),
@@ -193,7 +223,7 @@ export const updateUser = async (id: string, updateData: updateUserData) => {
   delete updateData?.email
   delete updateData?.password
   delete updateData?.userType
-  delete updateData?.profileImage
+
 
   const user = await prisma.user.update({
     where: {id},
@@ -254,14 +284,43 @@ export const getAllFollowers = async(userId: string, pagination: {page: string, 
   const skip = ( (parseInt(pagination.page) ) - 1) * parseInt(pagination.take) 
   const takeVal = parseInt(pagination.take)
   const followers = await prisma.follows.findMany({
-    where: {followingId: userId},
+    where: {
+      follower: {
+        blocked:{
+          none:{
+            blockerId: userId
+          }
+        }
+      },
+      followingId: userId
+    },
     skip: skip,
     take: takeVal,
-    include: {follower: true}
+    include: {
+      follower:{
+        include:{
+          following: {
+            where: {
+              followerId: userId
+            },
+            select: {followerId: true}
+          }
+        }
+      }
+    }
   })
 
   const totalCount = await prisma.follows.count({
-    where: {followingId: userId},
+    where: {
+      follower: {
+        blocked:{
+          none:{
+            blockerId: userId
+          }
+        }
+      },
+      followingId: userId
+    },
   });
   const totalPages = Math.ceil( totalCount / parseInt(pagination.take));
   return {page: parseInt(pagination.page), totalPages, pageSize: takeVal, totalCount, data: followers}
@@ -271,14 +330,54 @@ export const getAllFollowing = async(userId: string, pagination: {page: string, 
   const skip = ( (parseInt(pagination.page) ) - 1) * parseInt(pagination.take) 
   const takeVal = parseInt(pagination.take)
   const following = await prisma.follows.findMany({
-    where: {followerId: userId},
+    where: {
+      following: {
+        blocked:{
+          none:{
+            blockerId: userId
+          }
+        }
+      },
+      followerId: userId
+    },
     skip: skip,
     take: takeVal,
-    include: {following: true}
+    /* include: {
+      following:{
+        include:{
+          following:{
+            where: {
+              id: userId
+            }
+          }
+        }
+      }
+    } */
+    include: {
+      following:{
+        include:{
+          followers: {
+            where: {
+              followingId: userId
+            },
+            select: {followingId: true}
+          }
+        }
+      }
+    }
   })
 
   const totalCount = await prisma.follows.count({
-    where: {followerId: userId},
+    where: {
+      following: {
+        blocked:{
+          none:{
+            blockerId: userId
+          }
+        }
+      },
+      followerId: userId
+    },
   });
   const totalPages = Math.ceil( totalCount / parseInt(pagination.take));
   return {page: parseInt(pagination.page), totalPages, pageSize: takeVal, totalCount, data: following}

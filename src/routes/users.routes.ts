@@ -49,7 +49,6 @@ router.post('/unFollow', authValidation, unFollowUserController);
 router.get('/follow/getFollowers', authValidation, getFollowersController);
 router.get('/follow/getFollowing', authValidation, getFollowingController);
 router.post('/follow/checkFollowing', authValidation, checkIfIFollowUserController);
-//router.post('/follow/checkIfFollowed', authValidation, checkIfUserFollowsMeController);
 
 
 export default router;

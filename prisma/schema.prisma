@@ -102,7 +102,9 @@ model Call {
   initiatedById   String  
   receivedBy      User              @relation("Recipient", fields: [receivedById], references: [id],  onDelete: Cascade) 
   receivedById    String               
-  duration        Int
+  duration        Int?
+  status          String?
+  metaData        Json?
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
 }

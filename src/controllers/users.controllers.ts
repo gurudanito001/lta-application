@@ -20,6 +20,7 @@ import {
   checkIfIFollowUser,
   checkIfUserFollowsMe
 } from '../models/users.models';
+import { getBlockedUsers } from '../models/blocking.models';
 import type { User } from '@prisma/client';
 import { getUserFilters } from '../models/users.models';
 import { uploadImage } from '../services/fileService';
@@ -112,12 +113,14 @@ export const checkUsernameAvailability = async(req: Request | any, res: Response
   }
 };
 
-export const getUsersController =  async (req: Request, res: Response) => {
+export const getUsersController =  async (req: Request | any, res: Response) => {
   const {userType, country, gender, online, topics}: getUserFilters = req.query;
   const page = req?.query?.page?.toString() || "1";
   const take = req?.query?.size?.toString() || "20"; 
+  const id = req.user.userId;
+
   try {
-    const users = await getAllUsers({userType, country, gender, online, topics}, {page, take});
+    const users = await getAllUsers(id, {userType, country, gender, online, topics}, {page, take});
     res.status(200).json({ message: "Users fetched successfully", payload: users });
   } catch (error: Error | any) {
     res.status(500).json({ message: `Something went wrong ${error?.message}` });
@@ -164,7 +167,7 @@ export const createUserController = async(req: Request, res: Response) => {
 export const updateUserController = async(req: Request | any, res: Response) => {
   try {
     const id = req.user.userId;
-    const updateData = req.body;
+    let updateData = req.body;
     const updatedUser = await updateUser(id, updateData)
     res.status(200).json({ message: "User updated successfully", payload: updatedUser });
   } catch (error: Error | any) {

@@ -14,7 +14,7 @@ import config from "../config/config";
 
 
 export function generateToken (data: any) {
-  return jwt.sign(data, config.SECRET, {expiresIn: config.ACCESS_TOKEN_EXPIRY});
+  return jwt.sign(data, config.SECRET, /* {expiresIn: config.ACCESS_TOKEN_EXPIRY} */);
 };
 
 export function decodeToken(token: string){
