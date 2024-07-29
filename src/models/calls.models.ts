@@ -35,7 +35,7 @@ export const getAllCalls = async(filters: getCallsFilters,  pagination: {page: s
     where: {
       OR: [
         {callerId: filters?.userId},
-        {receiverId: filters?.userId}
+        {calleeId: filters?.userId}
       ],
       duration: { 
         ...(deriveDurationFilter(filters?.status))
@@ -60,7 +60,7 @@ export const getAllCalls = async(filters: getCallsFilters,  pagination: {page: s
     where: {
       OR: [
         {callerId: filters?.userId},
-        {receiverId: filters?.userId}
+        {calleeId: filters?.userId}
       ],
       duration: { 
         ...(deriveDurationFilter(filters?.status))
@@ -87,18 +87,27 @@ export const getCallById = async(id: string) => {
 };
 
 interface createCallData {
-  callerId:       string
-  receiverId:    string
-  duration:       number
+  appid: string,
+  call_id: string
+  caller:       string
+  user_ids:    string[]
+  timestamp: number
+  duration?:       number,
+  event: string,
+  timeout?: number
 }
 export const createCall = async(callData: createCallData) => {
   const call = await prisma.call.create({
     data: {
-      callerId: callData?.callerId,
-      receiverId: callData?.receiverId,
-      initiatedById: callData?.callerId,
-      receivedById: callData?.receiverId,
-      duration: callData?.duration
+      appId: callData?.appid,
+      callId: callData?.call_id,
+      callerId: callData?.caller,
+      calleeId: callData?.user_ids[0],
+      initiatedById: callData?.caller,
+      receivedById: callData?.user_ids[0],
+      createTime: callData?.timestamp,
+      status: callData?.event,
+      timeout: callData?.timeout,
     }
   })
   return call
@@ -106,13 +115,27 @@ export const createCall = async(callData: createCallData) => {
 
 
 interface updateCallData {
-  callerId:       string
-  receiverId:    string
+  appid: string,
+  call_id: string
+  event: string,
+  reason:  string,
+  timestamp: number
+  user_ids:    string[]
+  duration?:       number,
 }
-export const updateCall = async (id: string, updateData: updateCallData) => {
+export const updateCall = async (updateData: updateCallData) => {
   const call = await prisma.call.update({
-    where: {id},
-    data: updateData
+    where: {callId: updateData?.call_id},
+    data: {
+      status: updateData?.event,
+      ...(updateData?.reason && {reason: updateData?.reason}),
+      ...(updateData?.duration && {duration: updateData?.duration}),
+      ...(updateData?.event === "call_cancel" && {cancelTime: updateData?.timestamp}),
+      ...(updateData?.event === "call_timeout" && {timeoutTime: updateData?.timestamp}),
+      ...(updateData?.event === "call_accept" && {acceptTime: updateData?.timestamp}),
+      ...(updateData?.event === "call_reject" && {rejectTime: updateData?.timestamp}),
+      ...(updateData?.event === "call_end" && {endTime: updateData?.timestamp}),
+    }
   })
   return call;
 };
@@ -120,11 +143,11 @@ export const updateCall = async (id: string, updateData: updateCallData) => {
 export const clearCallLogs = async(userId: string) => {
   const callerData = await prisma.call.updateMany({
     where: {callerId: userId},
-    data: {callerId: null}
+    data: {callerId: ""}
   })
   const receiverData = await prisma.call.updateMany({
-    where: {receiverId: userId},
-    data: {receiverId: null}
+    where: {calleeId: userId},
+    data: {calleeId: ""}
   })
   return {callerData, receiverData}
 };

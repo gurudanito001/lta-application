@@ -40,18 +40,18 @@ model User {
   language        String?           
   bio             String?
   emailVerified   Boolean           @default(true)
-  followers       Follows[] @relation("UserFollowers")
-  following       Follows[] @relation("UserFollowing")
-  blockers        Blocking[] @relation("Blocker")
-  blocked         Blocking[] @relation("Blocked")
-  caller          Call[]         @relation("Caller")
-  receiver        Call[]         @relation("Receiver")
+  followers       Follows[]         @relation("UserFollowers")
+  following       Follows[]         @relation("UserFollowing")
+  blockers        Blocking[]        @relation("Blocker")
+  blocked         Blocking[]        @relation("Blocked")
+  caller          Call[]            @relation("Caller")
+  callee        Call[]            @relation("Callee")
   initiatedBy     Call[]            @relation("Initiator")
   receivedBy      Call[]            @relation("Recipient")
-  reporter        Report[]            @relation("Reporter")
-  offender        Report[]            @relation("Offender")
-  rater           Rating[]            @relation("Rater")
-  rated           Rating[]            @relation("Rated")
+reporter        Report[]            @relation("Reporter")
+offender        Report[]            @relation("Offender")
+rater           Rating[]            @relation("Rater")
+rated           Rating[]            @relation("Rated")
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
 }
@@ -61,24 +61,24 @@ model Follows {
   followerId      String
   followingId     String
   // Define foreign keys
-  follower        User     @relation("UserFollowers", fields: [followerId], references: [id])
-  following       User     @relation("UserFollowing", fields: [followingId], references: [id])
-  createdAt       DateTime?        @default(now())
-  updatedAt       DateTime?        @updatedAt 
+  follower        User              @relation("UserFollowers", fields: [followerId], references: [id])
+  following       User              @relation("UserFollowing", fields: [followingId], references: [id])
+  createdAt       DateTime?         @default(now())
+  updatedAt       DateTime?         @updatedAt 
   // Define unique constraint to prevent duplicate follows
   @@unique([followerId, followingId])
 }
 
 model Preference {
-  id              String          @id @default(uuid())
-  user            User            @relation(fields: [userId], references: [id],  onDelete: Cascade) 
-  userId          String          @unique 
-  topics          String[]        @default([])
-  genders         String[]        @default([])
-  languages       String[]        @default([])
-  countries       String[]        @default([])
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt  
+  id              String            @id @default(uuid())
+  user            User              @relation(fields: [userId], references: [id],  onDelete: Cascade) 
+  userId          String            @unique 
+  topics          String[]          @default([])
+  genders         String[]          @default([])
+  languages       String[]          @default([])
+  countries       String[]          @default([])
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt  
 }
 
 
@@ -93,17 +93,27 @@ model Recommendation {
 }
 
 model Call {
-  id              String            @id @default(uuid())
-  caller          User?             @relation("Caller", fields: [callerId], references: [id],  onDelete: Cascade) 
-  callerId        String?  
-  receiver        User?             @relation("Receiver", fields: [receiverId], references: [id],  onDelete: Cascade) 
-  receiverId      String?
-  initiatedBy     User              @relation("Initiator", fields: [initiatedById], references: [id],  onDelete: Cascade) 
+  id              String           @id @default(uuid())
+  appId           String?
+  callId          String           @unique
+  caller          User             @relation("Caller", fields: [callerId], references: [id],  onDelete: Cascade) 
+  callerId        String  
+  callee          User             @relation("Callee", fields: [calleeId], references: [id],  onDelete: Cascade) 
+  calleeId        String
+  initiatedBy     User             @relation("Initiator", fields: [initiatedById], references: [id],  onDelete: Cascade) 
   initiatedById   String  
-  receivedBy      User              @relation("Recipient", fields: [receivedById], references: [id],  onDelete: Cascade) 
-  receivedById    String               
+  receivedBy      User             @relation("Recipient", fields: [receivedById], references: [id],  onDelete: Cascade) 
+  receivedById    String  
+  createTime      Int?
+  cancelTime      Int?
+  acceptTime      Int?
+  timeoutTime     Int?
+  rejectTime      Int?
+  endTime         Int?             
   duration        Int?
   status          String?
+  timeout         Int?
+  reason          String?
   metaData        Json?
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt

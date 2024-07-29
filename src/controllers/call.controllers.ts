@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getAllCalls, getCallById, createCall, clearCallLogs } from '../models/calls.models';
+import { getAllCalls, getCallById, createCall, updateCall, clearCallLogs } from '../models/calls.models';
 import type { Call } from '@prisma/client';
 import { uploadImage } from '../services/fileService';
 
@@ -31,16 +31,40 @@ export const getCallByIdController = async(req: Request, res: Response) => {
 };
 
 interface saveCallData {
-  callerId: string, 
-  receiverId: string,
-  duration: number,
+  appid: string,
+  call_id: string
+  caller:       string
+  user_ids:    string[]
+  timestamp: number
+  duration?:       number,
+  event: string,
+  timeout?: number
 }
 export const saveCallController = async(req: Request, res: Response) => {
   try {
     const data = req.body as saveCallData;
     console.log("TESTING CALLS!!!!", data)
-    //const call = await createCall(data);
-    res.status(200).json({ message: "Call created successfully", payload: null });
+    const call = await createCall(data);
+    res.status(200).json({ message: "Call created successfully", payload: call });
+  } catch (error: Error | any) {
+    res.status(500).json({ message: `Something went wrong ${error?.message}` });
+  }
+};
+
+interface updateCallData {
+  appid: string,
+  call_id: string
+  event: string,
+  reason:  string,
+  timestamp: number
+  user_ids:    string[]
+  duration?:       number,
+}
+export const updateCallController = async(req: Request, res: Response) => {
+  try {
+    const data = req.body as updateCallData;
+    const call = await updateCall(data);
+    res.status(200).json({ message: "Call updated successfully", payload: call });
   } catch (error: Error | any) {
     res.status(500).json({ message: `Something went wrong ${error?.message}` });
   }
