@@ -1,6 +1,7 @@
 import { duration } from "moment";
 import { prisma } from "../utils/prisma"
-import type { Call } from "@prisma/client"
+import type { Call } from "@prisma/client";
+import formatIdToUuid from "../services/formatIdToUUID";
 
 interface getCallsFilters {
   userId: string,
@@ -101,10 +102,10 @@ export const createCall = async(callData: createCallData) => {
     data: {
       appId: callData?.appid,
       callId: callData?.call_id,
-      callerId: callData?.caller,
-      calleeId: callData?.user_ids[0],
-      initiatedById: callData?.caller,
-      receivedById: callData?.user_ids[0],
+      callerId: formatIdToUuid(callData?.caller),
+      calleeId: formatIdToUuid(callData?.user_ids[0]),
+      initiatedById: formatIdToUuid(callData?.caller),
+      receivedById: formatIdToUuid(callData?.user_ids[0]),
       createTime: callData?.timestamp,
       status: callData?.event,
       timeout: callData?.timeout,
