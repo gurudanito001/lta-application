@@ -69,11 +69,16 @@ interface updateCallData {
   timestamp?: number
   user_ids?: string[]
   duration?: number,
+  payload: any
 }
 export const updateCallController = async(req: Request, res: Response) => {
   try {
     const data = req.body as updateCallData;
-    console.log("UPDATE CALL!!!!", data)
+    console.log("UPDATE CALL PAYLOAD!!!!", data?.payload)
+    const parsedPayload = JSON.parse(data?.payload);
+    console.log("parsed payload!!!", parsedPayload)
+    const parsedData = JSON.parse(parsedPayload?.data);
+    console.log("parsed payload data!!!", parsedData)
     const call = await updateCall(data);
 
     const caller = await getUserById(call?.callerId);
