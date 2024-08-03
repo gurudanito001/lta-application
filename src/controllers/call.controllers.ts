@@ -53,7 +53,7 @@ interface saveCallData {
 export const saveCallController = async(req: Request, res: Response) => {
   try {
     const data = req.body as saveCallData;
-    console.log("TESTING CALLS!!!!", data)
+    console.log("CREATE CALL!!!!", data)
     const call = await createCall(data);
     res.status(200).json({ message: "Call created successfully", payload: call });
   } catch (error: Error | any) {
@@ -73,6 +73,7 @@ interface updateCallData {
 export const updateCallController = async(req: Request, res: Response) => {
   try {
     const data = req.body as updateCallData;
+    console.log("UPDATE CALL!!!!", data)
     const call = await updateCall(data);
 
     const caller = await getUserById(call?.callerId);
