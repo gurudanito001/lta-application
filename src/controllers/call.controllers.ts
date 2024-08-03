@@ -73,11 +73,12 @@ interface updateCallData {
 }
 export const updateCallController = async(req: Request, res: Response) => {
   try {
-    const data = req.body as updateCallData;
-    console.log("UPDATE CALL PAYLOAD!!!!", data?.payload)
-    const parsedPayload = JSON.parse(data?.payload);
+    const data = req.body as updateCallData | any;
+    const parsedData = JSON.parse(data);
+    console.log("UPDATE CALL Data!!!!", parsedData)
+    const parsedPayload = JSON.parse(parsedData?.payload);
     console.log("parsed payload!!!", parsedPayload)
-    const parsedData = JSON.parse(parsedPayload?.data);
+    const parsedPayloadData = JSON.parse(parsedPayload?.data);
     console.log("parsed payload data!!!", parsedData)
     const call = await updateCall(data);
 
