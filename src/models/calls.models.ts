@@ -31,16 +31,15 @@ export const getAllCalls = async(filters: getCallsFilters,  pagination: {page: s
 
   const skip = ( (parseInt(pagination.page) ) - 1) * parseInt(pagination.take) 
   const takeVal = parseInt(pagination.take)
-
   const calls = await prisma.call.findMany({
     where: {
       OR: [
         {callerId: filters?.userId},
         {calleeId: filters?.userId}
       ],
-      duration: { 
+      /* duration: { 
         ...(deriveDurationFilter(filters?.status))
-      }
+      } */
     },
     skip: skip,
     take: takeVal,
@@ -63,13 +62,42 @@ export const getAllCalls = async(filters: getCallsFilters,  pagination: {page: s
         {callerId: filters?.userId},
         {calleeId: filters?.userId}
       ],
-      duration: { 
+      /* duration: { 
         ...(deriveDurationFilter(filters?.status))
-      }
+      } */
     }
   });
   const totalPages = Math.ceil( totalCount / parseInt(pagination.take));
   return {page: parseInt(pagination.page), totalPages, pageSize: takeVal, totalCount, data: calls}
+};
+
+export const getCallStats = async(userId: string) => {
+  const numOfCalls = await prisma.call.count({
+    where: {
+      OR: [
+        {callerId: userId},
+        {calleeId: userId}
+      ],
+      duration: {
+        gt: 0
+      }
+    }
+  })
+  const durationOfCalls = await prisma.call.aggregate({
+    where: {
+      OR: [
+        {callerId: userId},
+        {calleeId: userId}
+      ],
+      duration: {
+        gt: 0
+      }
+    },
+    _sum: {
+      duration: true,
+    },
+  });
+  return {numOfCalls, durationOfCalls: durationOfCalls._sum.duration || 0, averageduration: durationOfCalls?._sum?.duration ? Math.ceil(durationOfCalls?._sum?.duration / numOfCalls) : 0}
 };
 
 export const getCallById = async(id: string) => {

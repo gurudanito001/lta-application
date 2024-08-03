@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   getCallsController,
+  getCallStatsController,
   getCallByIdController,
   saveCallController,
   updateCallController,
@@ -14,6 +15,7 @@ const router = Router();
 
 // Calls routes
 router.get('/', authValidation, getCallsController);
+router.get('/summary/:userId', authValidation, getCallStatsController);
 router.get('/:id', authValidation, getCallByIdController);
 router.post('/', saveCallController);
 router.post('/update', updateCallController);

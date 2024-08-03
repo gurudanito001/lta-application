@@ -146,6 +146,7 @@ export const loginController =  async (req: Request, res: Response) => {
     if (!passwordMatched) {
       return res.status(400).json({ message: "Email or Password Invalid", status: "error" })
     } 
+    await updateUser(userData?.id, {online: true});
     const token = generateToken({userId: userData?.id, email, expires: process.env.ACCESS_TOKEN_EXPIRY, type: 'ACCESS', secret: process.env.SECRET,})
     userData.password = ""
     res.status(201).json({message: "User Login Successful", status: "success", payload: {user: userData, token: token} })

@@ -20,6 +20,7 @@ import {
   checkIfIFollowUser,
   checkIfUserFollowsMe
 } from '../models/users.models';
+import { createNotification } from '../models/notification.models';
 import { getBlockedUsers } from '../models/blocking.models';
 import type { User } from '@prisma/client';
 import { getUserFilters } from '../models/users.models';
@@ -238,8 +239,12 @@ export const changePasswordController =  async (req: Request | any, res: Respons
 
 export const followUserController = async(req: Request, res: Response) => {
   try {
-    const data = req.body;
+    const data = req.body as {followerId: string, followingId: string};
     const followData = await followUser(data);
+    const follower = await getUserById(data?.followerId);
+    const followed = await getUserById(data?.followingId);
+    await createNotification({userId: data?.followerId, type: "follow", content: `You just followed ${followed?.firstName} ${followed?.lastName}`}) //notify the person that followed
+    await createNotification({userId: data?.followingId, type: "follow", content: `${follower?.firstName} ${follower?.lastName} just followed you`}) //notify the person that was followed 
     res.status(200).json({ message: "User followed successfully", payload: followData });
   } catch (error: Error | any) {
     res.status(500).json({ message: `Something went wrong ${error?.message}` });

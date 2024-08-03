@@ -40,18 +40,20 @@ model User {
   language        String?           
   bio             String?
   emailVerified   Boolean           @default(true)
+  allowNotification Boolean         @default(true)
   followers       Follows[]         @relation("UserFollowers")
   following       Follows[]         @relation("UserFollowing")
   blockers        Blocking[]        @relation("Blocker")
   blocked         Blocking[]        @relation("Blocked")
   caller          Call[]            @relation("Caller")
-  callee        Call[]            @relation("Callee")
+  callee          Call[]            @relation("Callee")
   initiatedBy     Call[]            @relation("Initiator")
   receivedBy      Call[]            @relation("Recipient")
-reporter        Report[]            @relation("Reporter")
-offender        Report[]            @relation("Offender")
-rater           Rating[]            @relation("Rater")
-rated           Rating[]            @relation("Rated")
+  reporter        Report[]            @relation("Reporter")
+  offender        Report[]            @relation("Offender")
+  rater           Rating[]            @relation("Rater")
+  rated           Rating[]            @relation("Rated")
+  notifications   Notification[]
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
 }
@@ -110,7 +112,7 @@ model Call {
   timeoutTime     Int?
   rejectTime      Int?
   endTime         Int?             
-  duration        Int?
+  duration        Int?             @default(0)
   status          String?
   timeout         Int?
   reason          String?
@@ -155,10 +157,26 @@ model Rating {
   updatedAt       DateTime          @updatedAt
 }
 
+model Notification {
+  id              String            @id @default(uuid())
+  user            User?             @relation( fields: [userId], references: [id],  onDelete: Cascade) 
+  userId          String?
+  type            NotificationType
+  content         String
+  isRead          Boolean           @default(false)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
 
 
 
 enum UserType {
   listener
   venter
+}
+
+enum NotificationType {
+  call
+  follow
 }

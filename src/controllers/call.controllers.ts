@@ -1,16 +1,26 @@
 import { Request, Response } from 'express';
-import { getAllCalls, getCallById, createCall, updateCall, clearCallLogs } from '../models/calls.models';
-import type { Call } from '@prisma/client';
-import { uploadImage } from '../services/fileService';
+import { getAllCalls, getCallStats, getCallById, createCall, updateCall, clearCallLogs } from '../models/calls.models';
+import { getUserById } from '../models/users.models';
+import { createNotification } from '../models/notification.models';
 
 
 export const getCallsController =  async (req: Request | any, res: Response) => {
   const page = req?.query?.page?.toString() || "1";
   const take = req?.query?.size?.toString() || "20"; 
-  let filters = {userId: req?.user?.userId, order: req?.query?.order, status: req?.query?.status}
+  let filters = {userId: req?.query?.userId || req?.user?.userId, order: req?.query?.order, status: req?.query?.status}
   try {
     const calls = await getAllCalls(filters, {page, take});
     res.status(200).json({ message: "Calls fetched successfully", payload: calls });
+  } catch (error: Error | any) {
+    res.status(500).json({ message: `Something went wrong ${error?.message}` });
+  }
+};
+
+export const getCallStatsController =  async (req: Request | any, res: Response) => {
+  const userId = req?.params?.userId || req?.user?.userId
+  try {
+    const callStats = await getCallStats(userId);
+    res.status(200).json({ message: "Call Stats fetched successfully", payload: callStats });
   } catch (error: Error | any) {
     res.status(500).json({ message: `Something went wrong ${error?.message}` });
   }
@@ -64,6 +74,28 @@ export const updateCallController = async(req: Request, res: Response) => {
   try {
     const data = req.body as updateCallData;
     const call = await updateCall(data);
+
+    const caller = await getUserById(call?.callerId);
+    const callee = await getUserById(call?.calleeId);
+    if(req.body?.event === "call_cancel"){
+      await createNotification({userId: call?.callerId, type: "call", content: `You just cancelled your call with ${callee?.firstName} ${callee?.lastName}`}) //notify the caller
+      await createNotification({userId: call?.calleeId, type: "call", content: `${caller?.firstName} ${caller?.lastName} just cancelled a call with you`}) //notify the callee
+    }
+    if(req.body?.event === "call_timeout"){
+      await createNotification({userId: call?.callerId, type: "call", content: `Your call was missed by ${callee?.firstName} ${callee?.lastName}`}) //notify the caller
+      await createNotification({userId: call?.calleeId, type: "call", content: `You missed a call from ${caller?.firstName} ${caller?.lastName}`}) //notify the callee
+    }
+
+    if(req.body?.event === "call_reject"){
+      await createNotification({userId: call?.callerId, type: "call", content: `Your call was rejected by ${callee?.firstName} ${callee?.lastName}`}) //notify the caller
+      await createNotification({userId: call?.calleeId, type: "call", content: `You rejected a call from ${caller?.firstName} ${caller?.lastName}`}) //notify the callee
+    }
+
+    if(req.body?.event === "call_end"){
+      await createNotification({userId: call?.callerId, type: "call", content: `Your call with ${callee?.firstName} ${callee?.lastName} lasted for ${call?.duration} seconds`}) //notify the caller
+      await createNotification({userId: call?.calleeId, type: "call", content: `Your call with ${caller?.firstName} ${caller?.lastName} lasted for ${call?.duration} seconds`}) //notify the callee
+    }
+    
     res.status(200).json({ message: "Call updated successfully", payload: call });
   } catch (error: Error | any) {
     res.status(500).json({ message: `Something went wrong ${error?.message}` });
