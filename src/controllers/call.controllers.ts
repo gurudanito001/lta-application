@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getAllCalls, getCallStats, getCallById, createCall, updateCall, clearCallLogs } from '../models/calls.models';
+import { getAllCalls, getCallStats, getCallById, createCall, updateCall, clearCallLogs, setCallTime } from '../models/calls.models';
 import { getUserById } from '../models/users.models';
 import { createNotification } from '../models/notification.models';
 
@@ -43,6 +43,7 @@ export const getCallByIdController = async(req: Request, res: Response) => {
 interface saveCallData {
   appid: string,
   call_id: string
+  room_id: string,
   caller:       string
   user_ids:    string[]
   timestamp: number
@@ -53,7 +54,8 @@ interface saveCallData {
 }
 export const saveCallController = async(req: Request, res: Response) => {
   try {
-    const data = req.body as saveCallData;
+    let data = req.body as saveCallData;
+
     console.log("CREATE CALL!!!!", data)
     const payload = JSON.parse(data?.payload);
     console.log("Payload!!!!", payload)
@@ -61,7 +63,7 @@ export const saveCallController = async(req: Request, res: Response) => {
     console.log("Payload Data!!!!", payloadData)
 
 
-
+    data.room_id = payloadData?.call_id;
     const call = await createCall(data);
     res.status(200).json({ message: "Call created successfully", payload: call });
   } catch (error: Error | any) {
@@ -100,11 +102,46 @@ export const updateCallController = async(req: Request, res: Response) => {
       await createNotification({userId: call?.calleeId, type: "call", content: `You rejected a call from ${caller?.firstName} ${caller?.lastName}`}) //notify the callee
     }
 
-    if(req.body?.event === "call_end"){
+    /* if(req.body?.event === "call_end"){
+      await createNotification({userId: call?.callerId, type: "call", content: `Your call with ${callee?.firstName} ${callee?.lastName} lasted for ${call?.duration} seconds`}) //notify the caller
+      await createNotification({userId: call?.calleeId, type: "call", content: `Your call with ${caller?.firstName} ${caller?.lastName} lasted for ${call?.duration} seconds`}) //notify the callee
+    } */
+    
+    res.status(200).json({ message: "Call updated successfully", payload: call });
+  } catch (error: Error | any) {
+    res.status(500).json({ message: `Something went wrong ${error?.message}` });
+  }
+};
+
+
+interface setCallTimeData {
+  room_id: string,
+  login_time: number
+  logout_time: number,
+  event: "room_login" | "room_logout",
+  duration?: number
+}
+export const setCallTimeController = async(req: Request, res: Response) => {
+  try {
+    const data = req.body as setCallTimeData;
+    console.log("SET CALL TIME!!!!", data)
+
+    let duration = 0
+    if(data?.event === "room_logout"){
+      let startTime = data.login_time;
+      let endTime = data.logout_time;
+      let durationMilli = endTime - startTime;
+      duration = Math.ceil(durationMilli / 1000);
+    }
+    data.duration = duration;
+    const call = await setCallTime(data);
+
+    const caller = await getUserById(call?.callerId);
+    const callee = await getUserById(call?.calleeId);
+    if(data?.event === "room_logout"){
       await createNotification({userId: call?.callerId, type: "call", content: `Your call with ${callee?.firstName} ${callee?.lastName} lasted for ${call?.duration} seconds`}) //notify the caller
       await createNotification({userId: call?.calleeId, type: "call", content: `Your call with ${caller?.firstName} ${caller?.lastName} lasted for ${call?.duration} seconds`}) //notify the callee
     }
-    
     res.status(200).json({ message: "Call updated successfully", payload: call });
   } catch (error: Error | any) {
     res.status(500).json({ message: `Something went wrong ${error?.message}` });

@@ -11,7 +11,6 @@ interface getCallsFilters {
 
 
 export const getAllCalls = async(filters: getCallsFilters,  pagination: {page: string, take: string}) => {
-
   function deriveDurationFilter (status?: string ){
     switch(status){
       case "missed":
@@ -118,6 +117,7 @@ export const getCallById = async(id: string) => {
 interface createCallData {
   appid: string,
   call_id: string
+  room_id: string
   caller:       string
   user_ids:    string[]
   timestamp: number
@@ -130,6 +130,7 @@ export const createCall = async(callData: createCallData) => {
     data: {
       appId: callData?.appid,
       callId: callData?.call_id,
+      roomId: callData?.room_id,
       callerId: formatIdToUuid(callData?.caller),
       calleeId: formatIdToUuid(callData?.user_ids[0]),
       initiatedById: formatIdToUuid(callData?.caller),
@@ -163,10 +164,30 @@ export const updateCall = async (updateData: updateCallData) => {
       ...(updateData?.event === "call_timeout" && {timeoutTime: updateData?.timestamp}),
       ...(updateData?.event === "call_accept" && {acceptTime: updateData?.timestamp}),
       ...(updateData?.event === "call_reject" && {rejectTime: updateData?.timestamp}),
-      ...(updateData?.event === "call_end" && {endTime: updateData?.timestamp}),
+      //...(updateData?.event === "call_end" && {endTime: updateData?.timestamp}),
     }
   })
   return call;
+};
+
+interface setCallTimeData {
+  room_id: string,
+  login_time: number
+  logout_time: number,
+  event: "room_login" | "room_logout",
+  duration?: number
+}
+export const setCallTime = async (callTimeData: setCallTimeData) => {
+  
+  const updatedCall = await prisma.call.update({
+    where: {roomId: callTimeData?.room_id},
+    data: {
+      ...(callTimeData?.login_time && {loginTime: callTimeData?.login_time}),
+      ...(callTimeData?.logout_time && {logoutTime: callTimeData?.logout_time}),
+      ...(callTimeData?.duration && {duration: callTimeData?.duration})
+    }
+  })
+  return updatedCall;
 };
 
 export const clearCallLogs = async(userId: string) => {

@@ -98,6 +98,7 @@ model Call {
   id              String           @id @default(uuid())
   appId           String?
   callId          String           @unique
+  roomId          String           @unique
   caller          User             @relation("Caller", fields: [callerId], references: [id],  onDelete: Cascade) 
   callerId        String  
   callee          User             @relation("Callee", fields: [calleeId], references: [id],  onDelete: Cascade) 
@@ -111,7 +112,9 @@ model Call {
   acceptTime      Int?
   timeoutTime     Int?
   rejectTime      Int?
-  endTime         Int?             
+  endTime         Int?  
+  loginTime       Int?
+  logoutTime      Int?           
   duration        Int?             @default(0)
   status          String?
   timeout         Int?

@@ -5,6 +5,7 @@ import {
   getCallByIdController,
   saveCallController,
   updateCallController,
+  setCallTimeController,
   clearCallLogsController,
 } from '../controllers/call.controllers';
 
@@ -19,6 +20,7 @@ router.get('/summary/:userId', authValidation, getCallStatsController);
 router.get('/:id', authValidation, getCallByIdController);
 router.post('/', saveCallController);
 router.post('/update', updateCallController);
+router.post('/setDuration', setCallTimeController);
 router.patch('/clearHistory', authValidation, clearCallLogsController);
 
 export default router;
