@@ -129,8 +129,8 @@ export const setCallTimeController = async(req: Request, res: Response) => {
       duration = Math.ceil(durationMilli / 1000);
     }
     data.duration = duration;
-    data.login_time = data.login_time.toString();
-    data.logout_time = data.logout_time.toString()
+    data.login_time = data?.login_time ? data.login_time.toString() : "";
+    data.logout_time = data?.logout_time ? data.logout_time.toString() : ""
     const call = await setCallTime(data);
 
     const caller = await getUserById(call?.callerId);
