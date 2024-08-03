@@ -62,13 +62,13 @@ export const saveCallController = async(req: Request, res: Response) => {
 };
 
 interface updateCallData {
-  appid: string,
+  appid?: string,
   call_id: string
   event: string,
-  reason:  string,
-  timestamp: number
-  user_ids:    string[]
-  duration?:       number,
+  reason?:  string,
+  timestamp?: number
+  user_ids?: string[]
+  duration?: number,
 }
 export const updateCallController = async(req: Request, res: Response) => {
   try {

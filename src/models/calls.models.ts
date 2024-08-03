@@ -144,12 +144,12 @@ export const createCall = async(callData: createCallData) => {
 
 
 interface updateCallData {
-  appid: string,
+  appid?: string,
   call_id: string
   event: string,
-  reason:  string,
-  timestamp: number
-  user_ids:    string[]
+  reason?:  string,
+  timestamp?: number
+  user_ids?:    string[]
   duration?:       number,
 }
 export const updateCall = async (updateData: updateCallData) => {
