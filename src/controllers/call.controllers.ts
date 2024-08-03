@@ -48,12 +48,20 @@ interface saveCallData {
   timestamp: number
   duration?:       number,
   event: string,
-  timeout?: number
+  timeout?: number,
+  payload: any
 }
 export const saveCallController = async(req: Request, res: Response) => {
   try {
     const data = req.body as saveCallData;
     console.log("CREATE CALL!!!!", data)
+    const payload = JSON.parse(data?.payload);
+    console.log("Payload!!!!", payload)
+    const payloadData = JSON.parse(payload?.data)
+    console.log("Payload Data!!!!", payloadData)
+
+
+
     const call = await createCall(data);
     res.status(200).json({ message: "Call created successfully", payload: call });
   } catch (error: Error | any) {
@@ -69,17 +77,11 @@ interface updateCallData {
   timestamp?: number
   user_ids?: string[]
   duration?: number,
-  payload: any
 }
 export const updateCallController = async(req: Request, res: Response) => {
   try {
-    const data = req.body as updateCallData | any;
-    const parsedData = JSON.parse(data);
-    console.log("UPDATE CALL Data!!!!", parsedData)
-    const parsedPayload = JSON.parse(parsedData?.payload);
-    console.log("parsed payload!!!", parsedPayload)
-    const parsedPayloadData = JSON.parse(parsedPayload?.data);
-    console.log("parsed payload data!!!", parsedData)
+    const data = req.body as updateCallData;
+    console.log("UPDATE CALL!!!!", data)
     const call = await updateCall(data);
 
     const caller = await getUserById(call?.callerId);
