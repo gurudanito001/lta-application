@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Call" ALTER COLUMN "loginTime" SET DATA TYPE TEXT,
+ALTER COLUMN "logoutTime" SET DATA TYPE TEXT;

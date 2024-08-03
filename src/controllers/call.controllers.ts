@@ -101,11 +101,6 @@ export const updateCallController = async(req: Request, res: Response) => {
       await createNotification({userId: call?.callerId, type: "call", content: `Your call was rejected by ${callee?.firstName} ${callee?.lastName}`}) //notify the caller
       await createNotification({userId: call?.calleeId, type: "call", content: `You rejected a call from ${caller?.firstName} ${caller?.lastName}`}) //notify the callee
     }
-
-    /* if(req.body?.event === "call_end"){
-      await createNotification({userId: call?.callerId, type: "call", content: `Your call with ${callee?.firstName} ${callee?.lastName} lasted for ${call?.duration} seconds`}) //notify the caller
-      await createNotification({userId: call?.calleeId, type: "call", content: `Your call with ${caller?.firstName} ${caller?.lastName} lasted for ${call?.duration} seconds`}) //notify the callee
-    } */
     
     res.status(200).json({ message: "Call updated successfully", payload: call });
   } catch (error: Error | any) {
@@ -116,8 +111,8 @@ export const updateCallController = async(req: Request, res: Response) => {
 
 interface setCallTimeData {
   room_id: string,
-  login_time: number
-  logout_time: number,
+  login_time: any
+  logout_time: any,
   event: "room_login" | "room_logout",
   duration?: number
 }
@@ -128,12 +123,14 @@ export const setCallTimeController = async(req: Request, res: Response) => {
 
     let duration = 0
     if(data?.event === "room_logout"){
-      let startTime = data.login_time;
-      let endTime = data.logout_time;
+      let startTime = parseInt(data.login_time);
+      let endTime = parseInt(data.logout_time);
       let durationMilli = endTime - startTime;
       duration = Math.ceil(durationMilli / 1000);
     }
     data.duration = duration;
+    data.login_time = data.login_time.toString();
+    data.logout_time = data.logout_time.toString()
     const call = await setCallTime(data);
 
     const caller = await getUserById(call?.callerId);

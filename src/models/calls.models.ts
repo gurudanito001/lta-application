@@ -172,8 +172,8 @@ export const updateCall = async (updateData: updateCallData) => {
 
 interface setCallTimeData {
   room_id: string,
-  login_time: number
-  logout_time: number,
+  login_time: string
+  logout_time: string,
   event: "room_login" | "room_logout",
   duration?: number
 }

@@ -113,8 +113,8 @@ model Call {
   timeoutTime     Int?
   rejectTime      Int?
   endTime         Int?  
-  loginTime       Int?
-  logoutTime      Int?           
+  loginTime       String?
+  logoutTime      String?           
   duration        Int?             @default(0)
   status          String?
   timeout         Int?
