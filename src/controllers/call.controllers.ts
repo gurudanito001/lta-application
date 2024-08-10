@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getAllCalls, getCallStats, getCallById, createCall, updateCall, clearCallLogs, setCallTime } from '../models/calls.models';
+import { getAllCalls, getAllCallsBetweenTwoUsers, getCallStats, getCallById, createCall, updateCall, clearCallLogs, setCallTime } from '../models/calls.models';
 import { getUserById } from '../models/users.models';
 import { createNotification } from '../models/notification.models';
 
@@ -11,6 +11,18 @@ export const getCallsController =  async (req: Request | any, res: Response) => 
   try {
     const calls = await getAllCalls(filters, {page, take});
     res.status(200).json({ message: "Calls fetched successfully", payload: calls });
+  } catch (error: Error | any) {
+    res.status(500).json({ message: `Something went wrong ${error?.message}` });
+  }
+};
+
+export const getCallsBetweenTwoUsersController =  async (req: Request | any, res: Response) => {
+  const page = req?.query?.page?.toString() || "1";
+  const take = req?.query?.size?.toString() || "20"; 
+  let filters = {user1: req?.params?.user1, user2: req?.params?.user2, order: req?.query?.order, status: req?.query?.status}
+  try {
+    const calls = await getAllCallsBetweenTwoUsers(filters, {page, take});
+    res.status(200).json({ message: "Calls between two users fetched successfully", payload: calls });
   } catch (error: Error | any) {
     res.status(500).json({ message: `Something went wrong ${error?.message}` });
   }

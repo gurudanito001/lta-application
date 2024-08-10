@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { createRating, getAllRatings, calculateMeanUserRating } from '../models/rating.models';
-import type { Blocking } from '@prisma/client';
+import { createNotification } from '../models/notification.models';
+import { getUserById } from '../models/users.models';
 
 
 export const getRatingsController =  async (req: Request | any, res: Response) => {
@@ -24,6 +25,9 @@ export const createRatingController = async(req: Request, res: Response) => {
   try {
     const ratingData = req.body as {raterId: string, ratedId: string, rating: number, comment: string};
     const result = await createRating(ratingData);
+
+    let rater = await getUserById(ratingData?.raterId);
+    await createNotification({userId: ratingData?.ratedId, type: "rating", content: `You were just rated ${ratingData?.rating}star(s) by ${rater?.firstName} ${rater?.lastName}`}) //notify the person that followed
     if (result) {
       res.status(200).json({ message: "Rating created successfully", payload: result });
     } else {

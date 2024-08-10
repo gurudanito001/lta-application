@@ -163,7 +163,7 @@ interface createUserData {
   online?:          boolean           
   profileImage?:    string
   topics?:          string[]
-  language?:         string          
+  language?:        string[]          
   feeling?:         object              
   bio?:             string
   emailVerified:   boolean  
@@ -207,7 +207,8 @@ interface updateUserData {
   firstName?:       string
   lastName?:        string
   userType?:        "venter" | "listener"          
-  username?:        string         
+  username?:        string   
+  isActive?:        boolean      
   country?:         string
   gender?:          string
   email?:           string            
@@ -215,7 +216,7 @@ interface updateUserData {
   online?:          boolean           
   profileImage?:    string
   topics?:          string[]  
-  language?:        string        
+  language?:        string[]        
   feeling?:         object              
   bio?:             string
 }
@@ -223,6 +224,7 @@ export const updateUser = async (id: string, updateData: updateUserData) => {
   delete updateData?.email
   delete updateData?.password
   delete updateData?.userType
+  delete updateData?.isActive
 
 
   const user = await prisma.user.update({
@@ -247,6 +249,22 @@ export const updateUserByEmail = async (email: string, updateData: updateUserDat
     data: updateData
   })
   return user;
+};
+
+export const disableUser = async(id: string) => {
+  const user = await prisma.user.update({
+    where: {id},
+    data: {isActive: false}
+  })
+  return user
+};
+
+export const enableUser = async(id: string) => {
+  const user = await prisma.user.update({
+    where: {id},
+    data: {isActive: true}
+  })
+  return user
 };
 
 export const deleteUser = async(id: string) => {

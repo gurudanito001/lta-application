@@ -4,6 +4,8 @@ import {
   getUserByIdController,
   getUsersController,
   updateUserController,
+  disableUserController,
+  enableUserController,
   updateListeningPreferencesController,
   getMoodsController,
   setTopicsController,
@@ -34,6 +36,8 @@ router.post('/username/availability', checkUsernameAvailability);
 router.get('/', authValidation, getUsersController);
 router.get('/listeners', authValidation, getListenersController);
 router.get('/:id', authValidation, getUserByIdController);
+router.patch('/disable/:userId', authValidation, disableUserController);
+router.patch('/enable/:userId', authValidation, enableUserController);
 router.patch('/profile', authValidation, updateUserController);
 router.post('/listeningPreferences', authValidation, createListeningPreferencesController);
 router.patch('/listeningPreferences', authValidation, updateListeningPreferencesController);

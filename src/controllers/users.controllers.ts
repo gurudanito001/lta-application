@@ -7,6 +7,8 @@ import {
   getUserById,
   createUser,
   updateUser,
+  disableUser,
+  enableUser,
   createUserListeningPreferences,
   updateUserListeningPreferences,
   deleteUser,
@@ -171,6 +173,26 @@ export const updateUserController = async(req: Request | any, res: Response) => 
     let updateData = req.body;
     const updatedUser = await updateUser(id, updateData)
     res.status(200).json({ message: "User updated successfully", payload: updatedUser });
+  } catch (error: Error | any) {
+    res.status(500).json({ message: `Something went wrong ${error?.message}` });
+  }
+};
+
+export const disableUserController = async(req: Request | any, res: Response) => {
+  try {
+    const id = req.params.userId;
+    const user = await disableUser(id);
+    res.status(200).json({ message: "User disabled successfully", payload: null });
+  } catch (error: Error | any) {
+    res.status(500).json({ message: `Something went wrong ${error?.message}` });
+  }
+};
+
+export const enableUserController = async(req: Request | any, res: Response) => {
+  try {
+    const id = req.params.userId;
+    const user = await enableUser(id);
+    res.status(200).json({ message: "User enabled successfully", payload: user });
   } catch (error: Error | any) {
     res.status(500).json({ message: `Something went wrong ${error?.message}` });
   }

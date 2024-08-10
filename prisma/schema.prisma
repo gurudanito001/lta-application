@@ -29,6 +29,8 @@ model User {
   userType        UserType   
   preferences     Preference?       
   username        String?           @unique
+  isActive        Boolean           @default(true)
+  showProfileImg  Boolean           @default(true)
   country         String?
   gender          String?
   email           String            @unique
@@ -37,7 +39,7 @@ model User {
   profileImage    String?
   topics          String[]          @default([])
   feeling         Json              @default("{}")
-  language        String?           
+  language        String[]           
   bio             String?
   emailVerified   Boolean           @default(true)
   allowNotification Boolean         @default(true)
@@ -171,6 +173,15 @@ model Notification {
   updatedAt       DateTime          @updatedAt
 }
 
+model AppVersion {
+  id              String            @id @default(uuid())             
+  version         String
+  message         String
+  force           Boolean           @default(false)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
 
 
 
@@ -182,4 +193,5 @@ enum UserType {
 enum NotificationType {
   call
   follow
+  rating
 }

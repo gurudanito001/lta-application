@@ -7,7 +7,8 @@ import callsRoutes from './calls.routes';
 import blockingRoutes from './blocking.routes';
 import ratingRoutes from './ratings.routes';
 import reportRoutes from './reports.routes';
-import notificationRoutes from './notification.routes'
+import notificationRoutes from './notification.routes';
+import appVersionRoutes from './appVersion.routes'
 
 // Create a new Router instance
 const router = Router();
@@ -22,5 +23,6 @@ router.use('/blockings', blockingRoutes);
 router.use('/ratings', ratingRoutes);
 router.use('/reports', reportRoutes);
 router.use('/notifications', notificationRoutes);
+router.use('/appVersion', appVersionRoutes);
 
 export default router;
