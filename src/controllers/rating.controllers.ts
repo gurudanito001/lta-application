@@ -27,7 +27,7 @@ export const createRatingController = async(req: Request, res: Response) => {
     const result = await createRating(ratingData);
 
     let rater = await getUserById(ratingData?.raterId);
-    await createNotification({userId: ratingData?.ratedId, type: "rating", content: `You were just rated ${ratingData?.rating}star(s) by ${rater?.firstName} ${rater?.lastName}`}) //notify the person that followed
+    await createNotification({userId: ratingData?.ratedId, type: "rating", content: `You were just rated ${ratingData?.rating}star(s) by ${rater?.username}`}) //notify the person that followed
     if (result) {
       res.status(200).json({ message: "Rating created successfully", payload: result });
     } else {

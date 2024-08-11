@@ -13,7 +13,7 @@ export const getAllNotifications = async(filters: filtersData, pagination: {page
     where: {
       ...( filters.userId && {userId: filters?.userId}),
       ...( filters.type && {type: filters?.type}),
-      isRead: filters?.isRead || false
+      ...( filters.isRead && {isRead: filters?.isRead})
     },
     skip: skip,
     take: takeVal,
@@ -28,7 +28,7 @@ export const getAllNotifications = async(filters: filtersData, pagination: {page
     where: {
       ...( filters.userId && {userId: filters?.userId}),
       ...( filters.type && {type: filters?.type}),
-      isRead: filters?.isRead || false
+      ...( filters.isRead && {isRead: filters?.isRead})
     }
   });
   const totalUnreadCount = await prisma.notification.count({

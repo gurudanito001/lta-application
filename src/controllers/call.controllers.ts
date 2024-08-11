@@ -101,17 +101,17 @@ export const updateCallController = async(req: Request, res: Response) => {
     const caller = await getUserById(call?.callerId);
     const callee = await getUserById(call?.calleeId);
     if(req.body?.event === "call_cancel"){
-      await createNotification({userId: call?.callerId, type: "call", content: `You just cancelled your call with ${callee?.firstName} ${callee?.lastName}`}) //notify the caller
-      await createNotification({userId: call?.calleeId, type: "call", content: `${caller?.firstName} ${caller?.lastName} just cancelled a call with you`}) //notify the callee
+      await createNotification({userId: call?.callerId, type: "call", content: `You just cancelled your call with ${callee?.username}`}) //notify the caller
+      await createNotification({userId: call?.calleeId, type: "call", content: `${caller?.username} just cancelled a call with you`}) //notify the callee
     }
     if(req.body?.event === "call_timeout"){
-      await createNotification({userId: call?.callerId, type: "call", content: `Your call was missed by ${callee?.firstName} ${callee?.lastName}`}) //notify the caller
-      await createNotification({userId: call?.calleeId, type: "call", content: `You missed a call from ${caller?.firstName} ${caller?.lastName}`}) //notify the callee
+      await createNotification({userId: call?.callerId, type: "call", content: `Your call was missed by ${callee?.username}`}) //notify the caller
+      await createNotification({userId: call?.calleeId, type: "call", content: `You missed a call from ${caller?.username}`}) //notify the callee
     }
 
     if(req.body?.event === "call_reject"){
-      await createNotification({userId: call?.callerId, type: "call", content: `Your call was rejected by ${callee?.firstName} ${callee?.lastName}`}) //notify the caller
-      await createNotification({userId: call?.calleeId, type: "call", content: `You rejected a call from ${caller?.firstName} ${caller?.lastName}`}) //notify the callee
+      await createNotification({userId: call?.callerId, type: "call", content: `Your call was rejected by ${callee?.username}`}) //notify the caller
+      await createNotification({userId: call?.calleeId, type: "call", content: `You rejected a call from ${caller?.username}`}) //notify the callee
     }
     
     res.status(200).json({ message: "Call updated successfully", payload: call });
@@ -148,8 +148,8 @@ export const setCallTimeController = async(req: Request, res: Response) => {
     const caller = await getUserById(call?.callerId);
     const callee = await getUserById(call?.calleeId);
     if(data?.event === "room_logout"){
-      await createNotification({userId: call?.callerId, type: "call", content: `Your call with ${callee?.firstName} ${callee?.lastName} lasted for ${call?.duration} seconds`}) //notify the caller
-      await createNotification({userId: call?.calleeId, type: "call", content: `Your call with ${caller?.firstName} ${caller?.lastName} lasted for ${call?.duration} seconds`}) //notify the callee
+      await createNotification({userId: call?.callerId, type: "call", content: `Your call with ${callee?.username} lasted for ${call?.duration} seconds`}) //notify the caller
+      await createNotification({userId: call?.calleeId, type: "call", content: `Your call with ${caller?.username} lasted for ${call?.duration} seconds`}) //notify the callee
     }
     res.status(200).json({ message: "Call updated successfully", payload: call });
   } catch (error: Error | any) {

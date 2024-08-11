@@ -265,8 +265,8 @@ export const followUserController = async(req: Request, res: Response) => {
     const followData = await followUser(data);
     const follower = await getUserById(data?.followerId);
     const followed = await getUserById(data?.followingId);
-    await createNotification({userId: data?.followerId, type: "follow", content: `You just followed ${followed?.firstName} ${followed?.lastName}`}) //notify the person that followed
-    await createNotification({userId: data?.followingId, type: "follow", content: `${follower?.firstName} ${follower?.lastName} just followed you`}) //notify the person that was followed 
+    await createNotification({userId: data?.followerId, type: "follow", content: `You just followed ${followed?.username}`}) //notify the person that followed
+    await createNotification({userId: data?.followingId, type: "follow", content: `${follower?.username} just followed you`}) //notify the person that was followed 
     res.status(200).json({ message: "User followed successfully", payload: followData });
   } catch (error: Error | any) {
     res.status(500).json({ message: `Something went wrong ${error?.message}` });
