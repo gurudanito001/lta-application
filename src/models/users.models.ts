@@ -14,6 +14,7 @@ export interface getUserFilters {
 
 
 export const getAllMoods = async() => {
+  //await prisma.follows.deleteMany();
   return feelings
 };
 
@@ -74,7 +75,7 @@ export interface getListenerPreferencesFilters {
   country: string
 }
 export const getAllListeners = async( userId: string, filters: getListenerPreferencesFilters , pagination: {page: string, take: string}) => { 
-  const skip = ( (parseInt(pagination.page) ) - 1) * parseInt(pagination.take) 
+  const skip = ((parseInt(pagination.page) ) - 1) * parseInt(pagination.take) 
   const takeVal = parseInt(pagination.take)
   const preferences = await prisma.preference.findMany({
     where: {
@@ -88,10 +89,22 @@ export const getAllListeners = async( userId: string, filters: getListenerPrefer
           }
         }
       },
-      ...(filters?.mood && {topics: { has: filters?.mood }}),
-      ...(filters?.gender && {genders: { has: filters?.gender }}),
-      ...(filters?.language && {languages: { has: filters?.language }}),
-      ...(filters?.country && {countries: { has: filters?.country }})
+      ...(filters?.mood && {OR: [
+        {topics: {has: filters?.mood}},
+        {topics: {equals: []}}
+      ]}),
+      ...(filters?.gender && {OR: [
+        {genders: {has: filters?.gender}},
+        {genders: {equals: []}}
+      ]}),
+      ...(filters?.language && {OR: [
+        {languages: {has: filters?.language}},
+        {languages: {equals: []}}
+      ]}),
+      ...(filters?.country && {OR: [
+        {countries: {has: filters?.country}},
+        {countries: {equals: []}}
+      ]})
     },
     skip: skip,
     take: takeVal,
@@ -111,10 +124,22 @@ export const getAllListeners = async( userId: string, filters: getListenerPrefer
           }
         }
       },
-      ...(filters?.mood && {topics: { has: filters?.mood }}),
-      ...(filters?.gender && {genders: { has: filters?.gender }}),
-      ...(filters?.language && {languages: { has: filters?.language }}),
-      ...(filters?.country && {countries: { has: filters?.country }})
+      ...(filters?.mood && {OR: [
+        {topics: {has: filters?.mood}},
+        {topics: {equals: []}}
+      ]}),
+      ...(filters?.gender && {OR: [
+        {genders: {has: filters?.gender}},
+        {genders: {equals: []}}
+      ]}),
+      ...(filters?.language && {OR: [
+        {languages: {has: filters?.language}},
+        {languages: {equals: []}}
+      ]}),
+      ...(filters?.country && {OR: [
+        {countries: {has: filters?.country}},
+        {countries: {equals: []}}
+      ]})
     },
   });
   const totalPages = Math.ceil( totalCount / parseInt(pagination.take));
@@ -360,17 +385,6 @@ export const getAllFollowing = async(userId: string, pagination: {page: string, 
     },
     skip: skip,
     take: takeVal,
-    /* include: {
-      following:{
-        include:{
-          following:{
-            where: {
-              id: userId
-            }
-          }
-        }
-      }
-    } */
     include: {
       following:{
         include:{

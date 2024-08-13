@@ -239,7 +239,6 @@ export const deleteUserController = async(req: Request, res: Response) => {
   } catch (error: Error | any) {
     res.status(500).json({ message: `Something went wrong ${error?.message}` });
   }
-  
 };
 
 export const changePasswordController =  async (req: Request | any, res: Response) => {
