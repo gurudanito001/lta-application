@@ -2,6 +2,7 @@ import { prisma } from "../utils/prisma"
 import feelings from "../data/consts";
 import languages from "../data/languages";
 import { getBlockedUsers } from "./blocking.models";
+import { calculateMeanUserRating } from "./rating.models";
 
 
 export interface getUserFilters {
@@ -14,7 +15,6 @@ export interface getUserFilters {
 
 
 export const getAllMoods = async() => {
-  //await prisma.follows.deleteMany();
   return feelings
 };
 
@@ -90,10 +90,30 @@ export const getAllListeners = async( userId: string, filters: getListenerPrefer
           }
         }
       },
-      ...(filters?.mood && {topics: {has: filters?.mood}}),
-      ...(filters?.gender && {topics: {has: filters?.gender}}),
-      ...(filters?.language && {topics: {has: filters?.language}}),
-      ...(filters?.country && {topics: {has: filters?.country}}),
+      ...(filters?.mood && {
+        OR: [
+          { topics: { has: filters?.mood } },
+          { topics: { has: "all" } }
+        ]
+      }),
+      ...(filters?.gender && {
+        OR: [
+          { genders: { has: filters?.gender } },
+          { genders: { has: "all" } }
+        ]
+      }),
+      ...(filters?.language && {
+        OR: [
+          { languages: { has: filters?.language } },
+          { languages: { has: "all" } }
+        ]
+      }),
+      ...(filters?.country && {
+        OR: [
+          { countries: { has: filters?.country } },
+          { countries: { has: "all" } }
+        ]
+      }),
       ...(filters?.rating && {
         user: {
           averageRating: {
@@ -120,10 +140,30 @@ export const getAllListeners = async( userId: string, filters: getListenerPrefer
           }
         }
       },
-      ...(filters?.mood && {topics: {has: filters?.mood}}),
-      ...(filters?.gender && {topics: {has: filters?.gender}}),
-      ...(filters?.language && {topics: {has: filters?.language}}),
-      ...(filters?.country && {topics: {has: filters?.country}}),
+      ...(filters?.mood && {
+        OR: [
+          { topics: { has: filters?.mood } },
+          { topics: { has: "all" } }
+        ]
+      }),
+      ...(filters?.gender && {
+        OR: [
+          { genders: { has: filters?.gender } },
+          { genders: { has: "all" } }
+        ]
+      }),
+      ...(filters?.language && {
+        OR: [
+          { languages: { has: filters?.language } },
+          { languages: { has: "all" } }
+        ]
+      }),
+      ...(filters?.country && {
+        OR: [
+          { countries: { has: filters?.country } },
+          { countries: { has: "all" } }
+        ]
+      }),
       ...(filters?.rating && {
         user: {
           averageRating: {
