@@ -72,7 +72,8 @@ export interface getListenerPreferencesFilters {
   mood: string
   gender: string
   language: string
-  country: string
+  country: string,
+  rating: number
 }
 export const getAllListeners = async( userId: string, filters: getListenerPreferencesFilters , pagination: {page: string, take: string}) => { 
   const skip = ((parseInt(pagination.page) ) - 1) * parseInt(pagination.take) 
@@ -89,22 +90,17 @@ export const getAllListeners = async( userId: string, filters: getListenerPrefer
           }
         }
       },
-      ...(filters?.mood && {OR: [
-        {topics: {has: filters?.mood}},
-        {topics: {equals: []}}
-      ]}),
-      ...(filters?.gender && {OR: [
-        {genders: {has: filters?.gender}},
-        {genders: {equals: []}}
-      ]}),
-      ...(filters?.language && {OR: [
-        {languages: {has: filters?.language}},
-        {languages: {equals: []}}
-      ]}),
-      ...(filters?.country && {OR: [
-        {countries: {has: filters?.country}},
-        {countries: {equals: []}}
-      ]})
+      ...(filters?.mood && {topics: {has: filters?.mood}}),
+      ...(filters?.gender && {topics: {has: filters?.gender}}),
+      ...(filters?.language && {topics: {has: filters?.language}}),
+      ...(filters?.country && {topics: {has: filters?.country}}),
+      ...(filters?.rating && {
+        user: {
+          averageRating: {
+            gte: filters?.rating
+          }
+        }
+      })
     },
     skip: skip,
     take: takeVal,
@@ -124,22 +120,17 @@ export const getAllListeners = async( userId: string, filters: getListenerPrefer
           }
         }
       },
-      ...(filters?.mood && {OR: [
-        {topics: {has: filters?.mood}},
-        {topics: {equals: []}}
-      ]}),
-      ...(filters?.gender && {OR: [
-        {genders: {has: filters?.gender}},
-        {genders: {equals: []}}
-      ]}),
-      ...(filters?.language && {OR: [
-        {languages: {has: filters?.language}},
-        {languages: {equals: []}}
-      ]}),
-      ...(filters?.country && {OR: [
-        {countries: {has: filters?.country}},
-        {countries: {equals: []}}
-      ]})
+      ...(filters?.mood && {topics: {has: filters?.mood}}),
+      ...(filters?.gender && {topics: {has: filters?.gender}}),
+      ...(filters?.language && {topics: {has: filters?.language}}),
+      ...(filters?.country && {topics: {has: filters?.country}}),
+      ...(filters?.rating && {
+        user: {
+          averageRating: {
+            gte: filters?.rating
+          }
+        }
+      })
     },
   });
   const totalPages = Math.ceil( totalCount / parseInt(pagination.take));
@@ -244,6 +235,7 @@ interface updateUserData {
   language?:        string[]        
   feeling?:         object              
   bio?:             string
+  averageRating?:   number
 }
 export const updateUser = async (id: string, updateData: updateUserData) => {
   delete updateData?.email

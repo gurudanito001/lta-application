@@ -1,5 +1,6 @@
 import { prisma } from "../utils/prisma"
-import type { Email } from "@prisma/client"
+import type { Email } from "@prisma/client";
+import { updateUser } from "./users.models";
 
 interface getRatingFilters {
   raterId: string
@@ -90,6 +91,8 @@ export const createRating = async(ratingData: createRatingData) => {
   const rating = await prisma.rating.create({
     data: ratingData
   })
+  const userAverageRating = await calculateMeanUserRating(ratingData?.ratedId);
+  const updatedUser = await updateUser(ratingData?.ratedId, {averageRating: userAverageRating?._avg.rating || 0});
   return rating
 };
 
@@ -103,6 +106,8 @@ export const updateRating = async (id: string, updateData: updateRatingData) => 
     where: {id},
     data: updateData
   })
+  const userAverageRating = await calculateMeanUserRating(rating?.ratedId);
+  const updatedUser = await updateUser(rating?.ratedId, {averageRating: userAverageRating?._avg.rating || 0});
   return rating;
 };
 

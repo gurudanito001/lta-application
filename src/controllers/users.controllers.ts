@@ -24,7 +24,6 @@ import {
 } from '../models/users.models';
 import { createNotification } from '../models/notification.models';
 import { getBlockedUsers } from '../models/blocking.models';
-import type { User } from '@prisma/client';
 import { getUserFilters } from '../models/users.models';
 import { uploadImage } from '../services/fileService';
 import { prisma } from '../utils/prisma';
@@ -33,11 +32,6 @@ import { hashPassword } from '../services/authServices';
 
 export const getMoodsController =  async (req: Request, res: Response) => {
   try {
-    /* await prisma.email.deleteMany();
-    await prisma.user.deleteMany();
-    await prisma.listeningPreferences.deleteMany();
-    await prisma.recommendation.deleteMany(); */
-
     const moods = await getAllMoods();
     res.status(200).json({ message: "Moods fetched successfully", payload: moods });
   } catch (error: Error | any) {
@@ -132,11 +126,11 @@ export const getUsersController =  async (req: Request | any, res: Response) => 
 
 export const getListenersController =  async (req: Request | any, res: Response) => {
   const id = req.user.userId;
-  const {mood, gender, language, country}: getListenerPreferencesFilters = req.query;
+  const {mood, gender, language, country, rating} = req.query;
   const page = req?.query?.page?.toString() || "1";
   const take = req?.query?.size?.toString() || "20"; 
   try {
-    const listeners = await getAllListeners(id, {mood, gender, language, country}, {page, take});
+    const listeners = await getAllListeners(id, {mood, gender, language, country, rating: parseFloat(rating)}, {page, take});
     res.status(200).json({ message: "Listeners fetched successfully", payload: listeners });
   } catch (error: Error | any) {
     res.status(500).json({ message: `Something went wrong ${error?.message}` });

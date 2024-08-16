@@ -43,6 +43,7 @@ model User {
   bio             String?
   emailVerified   Boolean           @default(true)
   allowNotification Boolean         @default(true)
+  averageRating   Float             @default(0)
   followers       Follows[]         @relation("UserFollowers")
   following       Follows[]         @relation("UserFollowing")
   blockers        Blocking[]        @relation("Blocker")
