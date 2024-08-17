@@ -68,121 +68,66 @@ export const getAllUsers = async(userId: string, filters: getUserFilters, pagina
   return {page: parseInt(pagination.page), totalPages, pageSize: takeVal, totalCount, data: users}
 };
 
-export interface getListenerPreferencesFilters {
+export interface getListenerFilters {
   mood: string
   gender: string
   language: string
   country: string,
   rating: number
 }
-export const getAllListeners = async( userId: string, filters: getListenerPreferencesFilters , pagination: {page: string, take: string}) => { 
+export const getAllListeners = async( userId: string, filters: getListenerFilters , pagination: {page: string, take: string}) => { 
   const skip = ((parseInt(pagination.page) ) - 1) * parseInt(pagination.take) 
   const takeVal = parseInt(pagination.take)
-  const preferences = await prisma.preference.findMany({
+  const listeners = await prisma.user.findMany({
     where: {
-      NOT: {
-        userId: userId
+      userType: "listener",
+      NOT:{
+        id: userId
       },
-      user: {
-        blocked:{
-          none:{
-            blockerId: userId
-          }
+      blocked:{
+        none:{
+          blockerId: userId
         }
       },
-      ...(filters?.mood && {
+      ...( filters?.mood && {
         OR: [
-          { topics: { has: filters?.mood } },
-          { topics: { has: "all" } }
+          {topics: {has: filters.mood}},
+          {topics: {has: "all"}}
         ]
       }),
-      ...(filters?.gender && {
-        OR: [
-          { genders: { has: filters?.gender } },
-          { genders: { has: "all" } }
-        ]
-      }),
-      ...(filters?.language && {
-        OR: [
-          { languages: { has: filters?.language } },
-          { languages: { has: "all" } }
-        ]
-      }),
-      ...(filters?.country && {
-        OR: [
-          { countries: { has: filters?.country } },
-          { countries: { has: "all" } }
-        ]
-      }),
-      ...(filters?.rating && {
-        user: {
-          averageRating: {
-            gte: filters?.rating
-          }
-        }
-      })
+      ...( filters?.gender && {gender: filters.gender}),
+      ...( filters?.language && {language: {has: filters?.language}}),
+      ...( filters?.country && {country: filters.country}),
+      ...( filters?.rating && {averageRating: {gte: filters.rating}})
     },
     skip: skip,
-    take: takeVal,
-    include: {
-      user: true
-    }
+    take: takeVal
   });
-  const totalCount = await prisma.preference.count({
+  const totalCount = await prisma.user.count({
     where: {
-      NOT: {
-        userId: userId
+      userType: "listener",
+      NOT:{
+        id: userId
       },
-      user: {
-        blocked:{
-          none:{
-            blockerId: userId
-          }
+      blocked:{
+        none:{
+          blockerId: userId
         }
       },
-      ...(filters?.mood && {
-        OR: [
-          { topics: { has: filters?.mood } },
-          { topics: { has: "all" } }
-        ]
-      }),
-      ...(filters?.gender && {
-        OR: [
-          { genders: { has: filters?.gender } },
-          { genders: { has: "all" } }
-        ]
-      }),
-      ...(filters?.language && {
-        OR: [
-          { languages: { has: filters?.language } },
-          { languages: { has: "all" } }
-        ]
-      }),
-      ...(filters?.country && {
-        OR: [
-          { countries: { has: filters?.country } },
-          { countries: { has: "all" } }
-        ]
-      }),
-      ...(filters?.rating && {
-        user: {
-          averageRating: {
-            gte: filters?.rating
-          }
-        }
-      })
+      ...( filters?.mood && {topics: {has: filters.mood}}),
+      ...( filters?.gender && {gender: filters.gender}),
+      ...( filters?.language && {language: {has: filters?.language}}),
+      ...( filters?.country && {country: filters.country}),
+      ...( filters?.rating && {averageRating: {gte: filters.rating}})
     },
   });
   const totalPages = Math.ceil( totalCount / parseInt(pagination.take));
-  return {page: parseInt(pagination.page), totalPages, pageSize: takeVal, totalCount, data: preferences}
+  return {page: parseInt(pagination.page), totalPages, pageSize: takeVal, totalCount, data: listeners}
 };
 
 export const getUserById = async(id: string) => {
   const user = await prisma.user.findFirst({
     where: {id},
-    include: {
-      preferences: true
-    }
   })
   return user
 };
@@ -190,9 +135,6 @@ export const getUserById = async(id: string) => {
 export const getUserByEmail = async(email: string) => {
   const user = await prisma.user.findFirst({
     where: {email},
-    include: {
-      preferences: true
-    }
   })
   return user
 };
@@ -200,9 +142,6 @@ export const getUserByEmail = async(email: string) => {
 export const getUserByUsername = async(username: string) => {
   const user = await prisma.user.findFirst({
     where: {username},
-    include: {
-      preferences: true
-    }
   })
   return user
 };
@@ -231,33 +170,6 @@ export const createUser = async(userData: createUserData) => {
   return user
 };
 
-interface CreateUserListeningPreferencesData {
-  userId:           string
-  genders?:         string[]
-  languages?:       string[]          
-  topics?:          string[] 
-  countries?:       string[]
-}
-export const createUserListeningPreferences = async(preferences: CreateUserListeningPreferencesData) => {
-  const listeningPreferences = await prisma.preference.create({
-    data: preferences
-  })
-  return listeningPreferences
-};
-
-interface UpdateUserListeningPreferencesData {
-  genders?:        string[]
-  languages?:      string[]          
-  topics?:         string[]    
-  countries?:      string[]
-}
-export const updateUserListeningPreferences = async( userId: string, preferences: UpdateUserListeningPreferencesData) => {
-  const listeningPreferences = await prisma.preference.update({
-    where: {userId},
-    data: preferences
-  })
-  return listeningPreferences
-};
 
 interface updateUserData {
   firstName?:       string

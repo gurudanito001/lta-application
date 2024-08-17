@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import {
   createUser,
-  createUserListeningPreferences,
+  //createUserListeningPreferences,
   getAllUsers,
   getUserByEmail,
   updateUser,
@@ -123,9 +123,9 @@ export const registerController =  async (req: Request, res: Response) => {
     }
     // create user 
     const user = await createUser({firstName, lastName, userType, username, country, gender, email, password: hashedPassword,  profileImage: result?.url || "", bio, topics, language, emailVerified: true})
-    if(user?.userType === "listener"){
+    /* if(user?.userType === "listener"){
       await createUserListeningPreferences({userId: user?.id})
-    }
+    } */
     
     res.status(201).json({message: "User Registration Successful", status: "success", payload: user})
   } catch (error: any) {

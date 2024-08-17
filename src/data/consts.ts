@@ -1,5 +1,7 @@
 
 const feelings = [
+
+  { "name": "all", "type": "positive", "intensity": "high", "emoji": "🫶" },
   { "name": "happiness", "type": "positive", "intensity": "high", "emoji": "😃" },
   { "name": "sadness", "type": "negative", "intensity": "high", "emoji": "😔" },
   { "name": "anger", "type": "negative", "intensity": "high", "emoji": "😠" },
@@ -8,10 +10,10 @@ const feelings = [
   { "name": "disgust", "type": "negative", "intensity": "high", "emoji": "😮" },
   { "name": "excitement", "type": "positive", "intensity": "high", "emoji": "😄" },
   { "name": "anxiety", "type": "negative", "intensity": "high", "emoji": "😟" },
-  { "name": "love", "type": "positive", "intensity": "high", "emoji": "😍" },
+  { "name": "disappointment", "type": "negative", "intensity": "medium", "emoji": "🤦🏽‍♂️" },
   { "name": "envy", "type": "negative", "intensity": "medium", "emoji": "😒" },
   { "name": "pride", "type": "positive", "intensity": "medium", "emoji": "😌" },
-  { "name": "shame", "type": "negative", "intensity": "high", "emoji": "😳" },
+  { "name": "embarrassment", "type": "negative", "intensity": "medium", "emoji": "🙈" },
   { "name": "guilt", "type": "negative", "intensity": "high", "emoji": "😞" },
   { "name": "relief", "type": "positive", "intensity": "medium", "emoji": "😮‍💨" },
   { "name": "contentment", "type": "positive", "intensity": "medium", "emoji": "😌" },
@@ -25,8 +27,8 @@ const feelings = [
   { "name": "sympathy", "type": "positive", "intensity": "medium", "emoji": "😟" },
   { "name": "jealousy", "type": "negative", "intensity": "medium", "emoji": "😏" },
   { "name": "compassion", "type": "positive", "intensity": "medium", "emoji": "🥹" },
-  { "name": "disappointment", "type": "negative", "intensity": "medium", "emoji": "🤦🏽‍♂️" },
-  { "name": "embarrassment", "type": "negative", "intensity": "medium", "emoji": "🙈" },
+  { "name": "love", "type": "positive", "intensity": "high", "emoji": "😍" },
+  { "name": "shame", "type": "negative", "intensity": "high", "emoji": "😳" },
   { "name": "determination", "type": "positive", "intensity": "high", "emoji": "💪🏾" },
   { "name": "curiosity", "type": "positive", "intensity": "medium", "emoji": "🤔" },
   { "name": "trust", "type": "positive", "intensity": "high", "emoji": "🤝" }

@@ -6,7 +6,7 @@ import {
   updateUserController,
   disableUserController,
   enableUserController,
-  updateListeningPreferencesController,
+  //updateListeningPreferencesController,
   getMoodsController,
   setTopicsController,
   setFeelingController,
@@ -14,7 +14,7 @@ import {
   checkUsernameAvailability,
   setProfileImageController,
   getLanguagesController,
-  createListeningPreferencesController,
+  //createListeningPreferencesController,
   getListenersController,
   followUserController,
   unFollowUserController,
@@ -39,8 +39,8 @@ router.get('/:id', authValidation, getUserByIdController);
 router.patch('/disable/:userId', authValidation, disableUserController);
 router.patch('/enable/:userId', authValidation, enableUserController);
 router.patch('/profile', authValidation, updateUserController);
-router.post('/listeningPreferences', authValidation, createListeningPreferencesController);
-router.patch('/listeningPreferences', authValidation, updateListeningPreferencesController);
+/* router.post('/listeningPreferences', authValidation, createListeningPreferencesController);
+router.patch('/listeningPreferences', authValidation, updateListeningPreferencesController); */
 router.delete('/:id', authValidation, deleteUserController);
 router.patch('/topics', authValidation, setTopicsController);
 router.patch('/feeling', authValidation, setFeelingController);

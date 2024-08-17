@@ -27,7 +27,6 @@ model User {
   firstName       String
   lastName        String
   userType        UserType   
-  preferences     Preference?       
   username        String?           @unique
   isActive        Boolean           @default(true)
   showProfileImg  Boolean           @default(true)
@@ -72,18 +71,6 @@ model Follows {
   updatedAt       DateTime?         @updatedAt 
   // Define unique constraint to prevent duplicate follows
   @@unique([followerId, followingId])
-}
-
-model Preference {
-  id              String            @id @default(uuid())
-  user            User              @relation(fields: [userId], references: [id],  onDelete: Cascade) 
-  userId          String            @unique 
-  topics          String[]          @default(["all"])
-  genders         String[]          @default(["all"])
-  languages       String[]          @default(["all"])
-  countries       String[]          @default(["all"])
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt  
 }
 
 

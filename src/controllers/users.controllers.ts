@@ -9,11 +9,11 @@ import {
   updateUser,
   disableUser,
   enableUser,
-  createUserListeningPreferences,
-  updateUserListeningPreferences,
+  //createUserListeningPreferences,
+  //updateUserListeningPreferences,
   deleteUser,
   getUserByUsername,
-  getListenerPreferencesFilters,
+  //getListenerPreferencesFilters,
   changePassword,
   followUser,
   unFollowUser,
@@ -23,10 +23,10 @@ import {
   checkIfUserFollowsMe
 } from '../models/users.models';
 import { createNotification } from '../models/notification.models';
-import { getBlockedUsers } from '../models/blocking.models';
+//import { getBlockedUsers } from '../models/blocking.models';
 import { getUserFilters } from '../models/users.models';
 import { uploadImage } from '../services/fileService';
-import { prisma } from '../utils/prisma';
+//import { prisma } from '../utils/prisma';
 import { hashPassword } from '../services/authServices';
 
 
@@ -192,7 +192,7 @@ export const enableUserController = async(req: Request | any, res: Response) => 
   }
 };
 
-export const createListeningPreferencesController = async(req: Request | any, res: Response) => {
+/* export const createListeningPreferencesController = async(req: Request | any, res: Response) => {
   try {
     const id = req.user.userId;
     let user = await getUserById(id);
@@ -206,9 +206,9 @@ export const createListeningPreferencesController = async(req: Request | any, re
   } catch (error: Error | any) {
     res.status(500).json({ message: `Something went wrong ${error?.message}` });
   }
-};
+}; */
 
-export const updateListeningPreferencesController = async(req: Request | any, res: Response) => {
+/* export const updateListeningPreferencesController = async(req: Request | any, res: Response) => {
   try {
     const id = req.user.userId;
     let user = await getUserById(id);
@@ -221,7 +221,7 @@ export const updateListeningPreferencesController = async(req: Request | any, re
   } catch (error: Error | any) {
     res.status(500).json({ message: `Something went wrong ${error?.message}` });
   }
-};
+}; */
 
 export const deleteUserController = async(req: Request, res: Response) => {
   try {
