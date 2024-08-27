@@ -10,19 +10,19 @@ interface SendEmailParams {
 export default async function sendEmail({ email, code, message = "verify your email address"  }: SendEmailParams ) : Promise<any> {
 
     let transporter = Nodemailer.createTransport({
-        name: "danielnwokocha",  //www.agronigeria.ng
-        host: "smtp.office365.com",  //mail.agronigeria.ng smtp-mail.outlook.com
-        port: 587,
-        secure: false, // true for 465, false for other ports
+        name: "Loose Application",  //www.agronigeria.ng
+        host: "smtp.zoho.com",  //mail.agronigeria.ng smtp-mail.outlook.com
+        port: 465,
+        secure: true, // true for 465, false for other ports
         auth: {
-          user: "danielnwokocha@outlook.com", //no-reply@agronigeria.ng
-          pass: "AvocadoNebulla9098!@#", //AgroNigA!!en90
+          user: process.env.email_username, //no-reply@agronigeria.ng
+          pass: process.env.email_password, //AgroNigA!!en90
         },
       });
     
     // setup e-mail data, even with unicode symbols
     var mailOptions = {
-        from: 'danielnwokocha@outlook.com',
+        from: process.env.email_username,
         to: `${email}`,
         subject: `Verify Email`,
         text: `Use this code to verify email ${code}`,

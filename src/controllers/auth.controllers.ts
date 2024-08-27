@@ -46,9 +46,9 @@ export const verifyEmailController =  async (req: Request, res: Response) => {
       await createEmail({email: email, code: randomCode})
     }
     // send email to user email
-    //await sendEmail({email, code: randomCode});
+    await sendEmail({email, code: randomCode});
 
-    nodeoutlook.sendEmail({
+    /* nodeoutlook.sendEmail({
       auth: {
         user: config.email_username,
         pass: config.email_password
@@ -73,7 +73,7 @@ export const verifyEmailController =  async (req: Request, res: Response) => {
       text: `Use this code to verify your email ${randomCode}`,
       onError: (e: any) => console.log(e),
       onSuccess: (i: any) => console.log(i)
-    });
+    }); */
 
 
     res.status(200).json({ message: "Verification code will be sent to email", status: "success", payload: {code: randomCode} });
