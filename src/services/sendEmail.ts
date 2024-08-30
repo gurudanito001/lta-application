@@ -28,7 +28,7 @@ export default async function sendEmail({ email, code, message = "verify your em
         text: `Use this code to verify email ${code}`,
         html: `
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center;">
-            <h3>Loose Therapy Application Onboarding Verification Code</h3>
+            <h3>Loose Application Onboarding Verification Code</h3>
             <p>A verification code is needed to continue the Onboarding process</p>
             
             <h1> ${code} </h1>
@@ -36,7 +36,7 @@ export default async function sendEmail({ email, code, message = "verify your em
             <p> This code will expire in 30 minutes </p>
             <p style="line-height: 1.3rem;">
             Thanks <br />
-            <em>The Loose Therapy App Team</em>
+            <em>The Loose App Team</em>
             </p>
         </div>
         `
