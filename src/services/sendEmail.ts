@@ -3,11 +3,12 @@ import * as Nodemailer from 'nodemailer';
 interface SendEmailParams {
     email: string,
     code: number,
+    title?: string,
     message?: string,
     buttonText?: string
 }
 // async..await is not allowed in global scope, must use a wrapper
-export default async function sendEmail({ email, code, message = "verify your email address"  }: SendEmailParams ) : Promise<any> {
+export default async function sendEmail({ email, code, title= "Verify Email", message = "verify your email address"  }: SendEmailParams ) : Promise<any> {
 
     let transporter = Nodemailer.createTransport({
         name: "Loose Application",  //www.agronigeria.ng
@@ -24,8 +25,8 @@ export default async function sendEmail({ email, code, message = "verify your em
     var mailOptions = {
         from: process.env.email_username,
         to: `${email}`,
-        subject: `Verify Email`,
-        text: `Use this code to verify email ${code}`,
+        subject: `${title}`,
+        text: `Use this code to ${message}`,
         html: `
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center;">
             <h3>Loose Application Onboarding Verification Code</h3>

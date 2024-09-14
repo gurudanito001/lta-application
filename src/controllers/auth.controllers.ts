@@ -166,7 +166,9 @@ export const forgotPasswordController =  async (req: Request, res: Response) => 
     await updateEmail(email, {code: randomCode})
     //await sendEmail({email, code: randomCode})
 
-    nodeoutlook.sendEmail({
+
+    await sendEmail({email, code: randomCode, title: "Forgot Password Verification Mail", message: "reset your password"});
+    /* nodeoutlook.sendEmail({
       auth: {
         user: config.email_username,
         pass: config.email_password
@@ -191,7 +193,7 @@ export const forgotPasswordController =  async (req: Request, res: Response) => 
       text: `Use this code to reset your password ${randomCode}`,
       onError: (e: any) => console.log(e),
       onSuccess: (i: any) => console.log(i)
-    });
+    }); */
 
 
 
